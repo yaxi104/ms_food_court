@@ -8,6 +8,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -28,7 +29,7 @@ class SecurityConfigTest {
     @Test
     @WithMockUser(username = "user", roles = {"USER"})
     void whenAccessDeniedTest() throws Exception {
-        mockMvc.perform(get("/restaurant/api/v1/"))
+        mockMvc.perform(post("/api/v1/restaurant"))
                 .andExpect(status().isForbidden())
                 .andExpect(content().json("{\"error\": \"Access denied\"}"));
     }

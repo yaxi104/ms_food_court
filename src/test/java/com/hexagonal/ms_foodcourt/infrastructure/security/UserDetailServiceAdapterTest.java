@@ -1,7 +1,7 @@
 package com.hexagonal.ms_foodcourt.infrastructure.security;
 
 import com.hexagonal.ms_foodcourt.domain.model.request.User;
-import com.hexagonal.ms_foodcourt.domain.spi.IUserPersistencePort;
+import com.hexagonal.ms_foodcourt.domain.spi.IUserFeignPort;
 import com.hexagonal.ms_foodcourt.infrastructure.security.adapter.UserDetailServiceAdapter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,13 +19,13 @@ import static org.mockito.Mockito.when;
 
 class UserDetailServiceAdapterTest {
 
-    private IUserPersistencePort userPersistencePort;
+    private IUserFeignPort userFeignPort;
     private UserDetailServiceAdapter userDetailsService;
 
     @BeforeEach
     void setUp() {
-        userPersistencePort = mock(IUserPersistencePort.class);
-        userDetailsService = new UserDetailServiceAdapter(userPersistencePort);
+        userFeignPort = mock(IUserFeignPort.class);
+        userDetailsService = new UserDetailServiceAdapter(userFeignPort);
     }
 
     @Test
@@ -35,7 +35,7 @@ class UserDetailServiceAdapterTest {
         mockUser.setPassword("password123");
         mockUser.setRole("USER");
 
-        when(userPersistencePort.findByEmail("test@example.com")).thenReturn(Optional.of(mockUser));
+        when(userFeignPort.getUserByEmail("test@example.com")).thenReturn(Optional.of(mockUser));
 
         UserDetails userDetails = userDetailsService.loadUserByUsername("test@example.com");
 
@@ -48,7 +48,7 @@ class UserDetailServiceAdapterTest {
 
     @Test
     void loadUserByUsernameUserNotFoundTest() {
-        when(userPersistencePort.findByEmail("noexiste@example.com")).thenReturn(Optional.empty());
+        when(userFeignPort.getUserByEmail("noexiste@example.com")).thenReturn(Optional.empty());
         assertThrows(UsernameNotFoundException.class, () -> {
             userDetailsService.loadUserByUsername("noexiste@example.com");
         });

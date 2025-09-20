@@ -3,8 +3,8 @@ package com.hexagonal.ms_foodcourt.util;
 import com.hexagonal.ms_foodcourt.application.dto.request.RestaurantRequest;
 import com.hexagonal.ms_foodcourt.domain.model.request.Restaurant;
 import com.hexagonal.ms_foodcourt.domain.model.request.User;
+import com.hexagonal.ms_foodcourt.infrastructure.output.feign.user.model.UserFeign;
 import com.hexagonal.ms_foodcourt.infrastructure.output.jpa.restaurant.entity.RestaurantEntity;
-import com.hexagonal.ms_foodcourt.infrastructure.output.jpa.user.entity.UserEntity;
 
 import java.time.LocalDate;
 
@@ -48,6 +48,7 @@ public class TestDataFactory {
 
     public static User mockUser() {
         User user = new User();
+        user.setId(1L);
         user.setFirstName("Pepito");
         user.setLastName("Perez");
         user.setIdNumber("1234");
@@ -59,16 +60,18 @@ public class TestDataFactory {
         return user;
     }
 
-    public static UserEntity mockUserEntity() {
-        var mockUserEntity = new UserEntity();
-        mockUserEntity.setFirstName("Pepito");
-        mockUserEntity.setLastName("Perez");
-        mockUserEntity.setIdNumber("1234");
-        mockUserEntity.setPhoneNumber("+573167549634");
-        mockUserEntity.setDateBirth(LocalDate.of(2000, 9, 17));
-        mockUserEntity.setEmail("test@example.com");
-        mockUserEntity.setPassword("password123");
-        mockUserEntity.setRole("PROPIETARIO");
-        return mockUserEntity;
+    public static UserFeign mockUserFeign() {
+        UserFeign user = new UserFeign();
+        user.setId(1L);
+        user.setFirstName("Pepito");
+        user.setLastName("Perez");
+        user.setIdNumber("1234");
+        user.setPhoneNumber("+573167549634");
+        user.setDateBirth(LocalDate.of(2000, 9, 17));
+        user.setEmail("test@example.com");
+        user.setPassword("password123");
+        user.setRole("PROPIETARIO");
+        return user;
     }
+
 }

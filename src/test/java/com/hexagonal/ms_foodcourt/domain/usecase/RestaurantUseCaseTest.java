@@ -1,14 +1,19 @@
 package com.hexagonal.ms_foodcourt.domain.usecase;
 
-import com.hexagonal.ms_foodcourt.domain.spi.IRestaurantPersistencePort;
-import com.hexagonal.ms_foodcourt.domain.spi.IUserPersistencePort;
+import com.hexagonal.ms_foodcourt.domain.exception.RestaurantAlreadyExistsException;
 import com.hexagonal.ms_foodcourt.domain.exception.UserNotExistsException;
+import com.hexagonal.ms_foodcourt.domain.model.request.Restaurant;
+import com.hexagonal.ms_foodcourt.domain.model.request.User;
+import com.hexagonal.ms_foodcourt.domain.spi.IRestaurantPersistencePort;
+import com.hexagonal.ms_foodcourt.domain.spi.IUserFeignPort;
 import com.hexagonal.ms_foodcourt.util.TestDataFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -26,24 +31,51 @@ class RestaurantUseCaseTest {
     private IRestaurantPersistencePort restaurantPersistencePort;
 
     @Mock
-    private IUserPersistencePort userPersistencePort;
+    private IUserFeignPort userFeignPort;
 
     @Test
     void saveRestaurantSuccessTest() {
-        var mockRestaurant = TestDataFactory.mockRestaurant();
-
-        when(userPersistencePort.existsByIdAndRole(1L, "PROPIETARIO")).thenReturn(true);
+        Restaurant mockRestaurant = TestDataFactory.mockRestaurant();
+        User userMock = TestDataFactory.mockUser();
+        when(userFeignPort.getUserByid(1L)).thenReturn(Optional.of(userMock));
+        when(restaurantPersistencePort.findByNit(mockRestaurant.getNit())).thenReturn(Optional.empty());
         restaurantUseCase.saveRestaurant(mockRestaurant);
 
-        verify(userPersistencePort).existsByIdAndRole(1L, "PROPIETARIO");
         verify(restaurantPersistencePort, times(1)).saveRestaurant(mockRestaurant);
-
     }
 
     @Test
-    void saveRestaurantOwnerNotExistsTest() {
+    void saveRestaurantExistTest() {
+        Restaurant mockRestaurant = TestDataFactory.mockRestaurant();
+        User userMock = TestDataFactory.mockUser();
+        when(userFeignPort.getUserByid(1L)).thenReturn(Optional.of(userMock));
+        when(restaurantPersistencePort.findByNit(mockRestaurant.getNit())).thenReturn(Optional.of(mockRestaurant));
+
+        RestaurantAlreadyExistsException ex = assertThrows(RestaurantAlreadyExistsException.class, () -> {
+            restaurantUseCase.saveRestaurant(mockRestaurant);
+        });
+
+        assertNotNull(ex);
+    }
+
+    @Test
+    void saveRestaurantOwnerNotExistsIdTest() {
+        User userMock = new User();
+        userMock.setId(2L);
+        saveRestaurantError(userMock);
+    }
+
+    @Test
+    void saveRestaurantOwnerNotExistsRoleTest() {
+        User userMock = new User();
+        userMock.setId(1L);
+        userMock.setRole("CLIENT");
+        saveRestaurantError(userMock);
+    }
+
+    private void saveRestaurantError(User userMock) {
         var mockRestaurant = TestDataFactory.mockRestaurant();
-        when(userPersistencePort.existsByIdAndRole(1L, "PROPIETARIO")).thenReturn(false);
+        when(userFeignPort.getUserByid(1L)).thenReturn(Optional.of(userMock));
 
         UserNotExistsException ex = assertThrows(UserNotExistsException.class, () -> {
             restaurantUseCase.saveRestaurant(mockRestaurant);

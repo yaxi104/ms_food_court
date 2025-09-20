@@ -30,7 +30,7 @@ class RestaurantRestControllerTest {
     private MockMvc mockMvc;
     private IRestaurantHandler restaurantHandler;
 
-    private JacksonTester<RestaurantRequest> jsonUserRequest;
+    private JacksonTester<RestaurantRequest>  jacksonTester;
 
     @BeforeEach
     void setUp() {
@@ -52,12 +52,12 @@ class RestaurantRestControllerTest {
 
     @Test
     void saveUserSuccessTest() throws Exception {
-        RestaurantRequest userRequest = TestDataFactory.mockRestaurantRequest();
+        RestaurantRequest restaurantRequest = TestDataFactory.mockRestaurantRequest();
 
-        mockMvc.perform(post("/api/v1/")
+        mockMvc.perform(post("/api/v1/restaurant")
                         .with(authentication(SecurityContextHolder.getContext().getAuthentication()))
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(jsonUserRequest.write(userRequest).getJson()))
+                        .content(jacksonTester.write(restaurantRequest).getJson()))
                 .andExpect(status().isCreated());
 
         verify(restaurantHandler).saveRestaurant(any(RestaurantRequest.class));
@@ -70,10 +70,10 @@ class RestaurantRestControllerTest {
         doThrow(new RestaurantAlreadyExistsException())
                 .when(restaurantHandler).saveRestaurant(any(RestaurantRequest.class));
 
-        mockMvc.perform(post("/api/v1/")
+        mockMvc.perform(post("/api/v1/restaurant")
                         .with(authentication(SecurityContextHolder.getContext().getAuthentication()))
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(jsonUserRequest.write(restaurantRequest).getJson()))
+                        .content(jacksonTester.write(restaurantRequest).getJson()))
                 .andExpect(status().isConflict());
     }
 
