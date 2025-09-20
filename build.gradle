@@ -58,3 +58,26 @@ tasks.named('test') {
 test {
     finalizedBy jacocoTestReport
 }
+
+jacocoTestReport {
+    reports {
+        xml.required = true
+        csv.required = false
+        html.outputLocation = layout.buildDirectory.dir('jacocoHtml')
+    }
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it,
+                    exclude: [
+                            '**/*dto/**',
+                            '**/*mapper/**',
+                            '**/*Constants.class',
+                            '**/*exception/**',
+                            '**/*entity/**',
+                            '**/*model/**',
+                            '**/*repository/**',
+                            '**/*client/**'
+                    ])
+        }))
+    }
+}

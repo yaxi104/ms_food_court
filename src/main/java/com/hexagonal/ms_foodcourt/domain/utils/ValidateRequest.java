@@ -4,11 +4,11 @@ import com.hexagonal.ms_foodcourt.domain.exception.BadRequestException;
 
 import java.util.regex.Pattern;
 
-import static com.hexagonal.ms_foodcourt.domain.utils.Constanst.MAX_LENGTH;
-import static com.hexagonal.ms_foodcourt.domain.utils.Constanst.PATTERN_NAME;
-import static com.hexagonal.ms_foodcourt.domain.utils.Constanst.PATTERN_NUMBER_PHONE;
-import static com.hexagonal.ms_foodcourt.domain.utils.Constanst.PATTERN_ONLY_NUMBER;
-import static com.hexagonal.ms_foodcourt.domain.utils.Constanst.PATTERN_URL;
+import static com.hexagonal.ms_foodcourt.domain.utils.Constants.MAX_LENGTH;
+import static com.hexagonal.ms_foodcourt.domain.utils.Constants.PATTERN_NAME;
+import static com.hexagonal.ms_foodcourt.domain.utils.Constants.PATTERN_NUMBER_PHONE;
+import static com.hexagonal.ms_foodcourt.domain.utils.Constants.PATTERN_ONLY_NUMBER;
+import static com.hexagonal.ms_foodcourt.domain.utils.Constants.PATTERN_URL;
 
 public class ValidateRequest {
 

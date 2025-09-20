@@ -1,8 +1,8 @@
 package com.hexagonal.ms_foodcourt.domain.utils;
 
-public class Constanst {
+public class Constants {
 
-    private Constanst() {
+    private Constants() {
     }
 
     /*    PATTERNS*/
