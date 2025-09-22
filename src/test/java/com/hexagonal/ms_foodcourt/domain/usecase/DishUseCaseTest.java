@@ -145,12 +145,7 @@ class DishUseCaseTest {
         User user = new User();
         user.setId(1L);
 
-        Category category = new Category(1L, "Comida rapida", "mock");
         when(categoryPersistencePort.findById(1L)).thenReturn(Optional.empty());
-//        when(dishPersistencePort.findById(1L)).thenReturn(Optional.of(dishDb));
-//        when(userSessionPort.getCurrentUserEmail()).thenReturn("user@example.com");
-//        when(userFeignPort.getUserByEmail("user@example.com")).thenReturn(Optional.of(user));
-//        when(restaurantPersistencePort.existsByIdAndOwnerId(1L, 1L)).thenReturn(false);
 
         assertThrows(CategoryNotFoundException.class, () -> {
             dishUseCase.saveDish(dishDb);

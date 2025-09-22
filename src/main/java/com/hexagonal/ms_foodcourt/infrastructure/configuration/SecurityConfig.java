@@ -16,6 +16,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import static com.hexagonal.ms_foodcourt.domain.utils.Constants.ROLE_ADMIN;
+import static com.hexagonal.ms_foodcourt.domain.utils.Constants.ROLE_CLIENTE;
 import static com.hexagonal.ms_foodcourt.domain.utils.Constants.ROLE_PROPIETARIO;
 
 @Configuration
@@ -49,6 +50,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/v1/dish/owner").hasRole(ROLE_PROPIETARIO)
                         .requestMatchers(HttpMethod.PATCH, "/api/v1/dish/owner").hasRole(ROLE_PROPIETARIO)
                         .requestMatchers(HttpMethod.PATCH, "/api/v1/dish/toggle/status").hasRole(ROLE_PROPIETARIO)
+                        .requestMatchers(HttpMethod.GET, "/api/v1/restaurant/all**").hasRole(ROLE_CLIENTE)
+
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex -> ex

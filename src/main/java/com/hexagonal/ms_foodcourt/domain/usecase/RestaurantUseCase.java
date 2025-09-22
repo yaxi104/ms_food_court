@@ -4,10 +4,14 @@ import com.hexagonal.ms_foodcourt.domain.api.IRestaurantServicePort;
 import com.hexagonal.ms_foodcourt.domain.exception.RestaurantAlreadyExistsException;
 import com.hexagonal.ms_foodcourt.domain.exception.UserNotExistsException;
 import com.hexagonal.ms_foodcourt.domain.model.Restaurant;
+import com.hexagonal.ms_foodcourt.domain.model.RestaurantResult;
 import com.hexagonal.ms_foodcourt.domain.model.UserAuth;
 import com.hexagonal.ms_foodcourt.domain.spi.IRestaurantPersistencePort;
 import com.hexagonal.ms_foodcourt.domain.spi.IUserFeignPort;
+import com.hexagonal.ms_foodcourt.domain.utils.PageableHelper;
 import com.hexagonal.ms_foodcourt.domain.utils.ValidateRequest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.Optional;
 
@@ -42,6 +46,12 @@ public class RestaurantUseCase implements IRestaurantServicePort {
             throw new RestaurantAlreadyExistsException();
         });
         restaurantPersistencePort.saveRestaurant(restaurant);
+    }
+
+    @Override
+    public Page<RestaurantResult> getListRestaurant(int page, int size) {
+        Pageable pageable = PageableHelper.getPageable(page, size, "name");
+        return restaurantPersistencePort.getListRestaurant(pageable);
     }
 
 }

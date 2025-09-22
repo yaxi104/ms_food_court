@@ -1,10 +1,14 @@
 package com.hexagonal.ms_foodcourt.infrastructure.output.jpa.restaurant.adapter;
 
 import com.hexagonal.ms_foodcourt.domain.model.Restaurant;
+import com.hexagonal.ms_foodcourt.domain.model.RestaurantResult;
 import com.hexagonal.ms_foodcourt.domain.spi.IRestaurantPersistencePort;
+import com.hexagonal.ms_foodcourt.infrastructure.output.jpa.restaurant.entity.RestaurantEntity;
 import com.hexagonal.ms_foodcourt.infrastructure.output.jpa.restaurant.mapper.IRestaurantEntityMapper;
 import com.hexagonal.ms_foodcourt.infrastructure.output.jpa.restaurant.repository.IRestaurantRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.Optional;
 
@@ -29,5 +33,11 @@ public class RestaurantJpaAdapter implements IRestaurantPersistencePort {
     @Override
     public boolean existsByIdAndOwnerId(Long idRestaurant, Long idOwner) {
         return restaurantRepository.existsByIdAndOwnerId(idRestaurant, idOwner);
+    }
+
+    @Override
+    public Page<RestaurantResult> getListRestaurant(Pageable pageable) {
+        Page<RestaurantEntity> entityPage = restaurantRepository.findAllByOrderByNameAsc(pageable);
+        return entityPage.map(restaurantEntityMapper::toResturantResult);
     }
 }

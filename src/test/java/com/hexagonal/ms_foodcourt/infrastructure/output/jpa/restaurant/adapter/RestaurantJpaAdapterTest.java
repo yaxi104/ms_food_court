@@ -1,6 +1,7 @@
 package com.hexagonal.ms_foodcourt.infrastructure.output.jpa.restaurant.adapter;
 
 import com.hexagonal.ms_foodcourt.domain.model.Restaurant;
+import com.hexagonal.ms_foodcourt.domain.model.RestaurantResult;
 import com.hexagonal.ms_foodcourt.infrastructure.output.jpa.restaurant.entity.RestaurantEntity;
 import com.hexagonal.ms_foodcourt.infrastructure.output.jpa.restaurant.mapper.IRestaurantEntityMapper;
 import com.hexagonal.ms_foodcourt.infrastructure.output.jpa.restaurant.repository.IRestaurantRepository;
@@ -10,7 +11,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -100,5 +107,38 @@ class RestaurantJpaAdapterTest {
 
         assertFalse(exists);
         verify(restaurantRepository).existsByIdAndOwnerId(restaurantId, ownerId);
+    }
+
+    @Test
+    void getListRestaurantTest() {
+        Pageable pageable = PageRequest.of(0, 2, Sort.by("name").ascending());
+
+        RestaurantEntity entity1 = new RestaurantEntity();
+        entity1.setName("A");
+
+        RestaurantEntity entity2 = new RestaurantEntity();
+        entity2.setName("B");
+
+        Page<RestaurantEntity> entityPage = new PageImpl<>(List.of(entity1, entity2));
+
+        RestaurantResult result1 = new RestaurantResult();
+        result1.setName("A");
+
+        RestaurantResult result2 = new RestaurantResult();
+        result2.setName("B");
+
+        when(restaurantRepository.findAllByOrderByNameAsc(pageable)).thenReturn(entityPage);
+        when(restaurantEntityMapper.toResturantResult(entity1)).thenReturn(result1);
+        when(restaurantEntityMapper.toResturantResult(entity2)).thenReturn(result2);
+
+        Page<RestaurantResult> resultPage = restaurantJpaAdapter.getListRestaurant(pageable);
+
+        assertEquals(2, resultPage.getContent().size());
+        assertEquals("A", resultPage.getContent().get(0).getName());
+        assertEquals("B", resultPage.getContent().get(1).getName());
+
+        verify(restaurantRepository).findAllByOrderByNameAsc(pageable);
+        verify(restaurantEntityMapper).toResturantResult(entity1);
+        verify(restaurantEntityMapper).toResturantResult(entity2);
     }
 }

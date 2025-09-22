@@ -1,16 +1,26 @@
 package com.hexagonal.ms_foodcourt.domain.utils;
 
 import com.hexagonal.ms_foodcourt.domain.exception.BadRequestException;
-import jakarta.validation.constraints.Null;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.lang.reflect.Constructor;
+
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ValidateRequestTest {
+    @Test
+    void constructorIsPrivate() throws Exception {
+        Constructor<ValidateRequest> constructor = ValidateRequest.class.getDeclaredConstructor();
+        constructor.setAccessible(true);
+
+        ValidateRequest instance = constructor.newInstance();
+        assertNotNull(instance);
+    }
 
     @ParameterizedTest
     @NullAndEmptySource
