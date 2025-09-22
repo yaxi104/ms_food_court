@@ -6,7 +6,7 @@ import com.hexagonal.ms_foodcourt.infrastructure.output.feign.user.model.UserFei
 
 import java.time.LocalDate;
 
-import static com.hexagonal.ms_foodcourt.domain.utils.Constants.PROPIETARIO;
+import static com.hexagonal.ms_foodcourt.domain.utils.Constants.ROLE_PROPIETARIO;
 
 
 public class TestDataUserFactory {
@@ -42,13 +42,12 @@ public class TestDataUserFactory {
         return user;
     }
 
-
     public static UserAuth mockUserAuth() {
         UserAuth user = new UserAuth();
         user.setId(1L);
         user.setEmail("test@example.com");
         user.setPassword("password123");
-        user.setRole(PROPIETARIO);
+        user.setRole(ROLE_PROPIETARIO);
         return user;
     }
 

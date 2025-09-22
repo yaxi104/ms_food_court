@@ -11,7 +11,7 @@ import com.hexagonal.ms_foodcourt.domain.utils.ValidateRequest;
 
 import java.util.Optional;
 
-import static com.hexagonal.ms_foodcourt.domain.utils.Constants.PROPIETARIO;
+import static com.hexagonal.ms_foodcourt.domain.utils.Constants.ROLE_PROPIETARIO;
 
 public class RestaurantUseCase implements IRestaurantServicePort {
 
@@ -28,7 +28,7 @@ public class RestaurantUseCase implements IRestaurantServicePort {
         Optional<UserAuth> user = userFeignPort.getUserByIdAuth(restaurant.getOwnerId());
         UserAuth userPresent = user.orElseThrow(UserNotExistsException::new);
 
-        if (!userPresent.getId().equals(restaurant.getOwnerId()) || !userPresent.getRole().equals(PROPIETARIO)) {
+        if (!userPresent.getId().equals(restaurant.getOwnerId()) || !userPresent.getRole().equals(ROLE_PROPIETARIO)) {
             throw new UserNotExistsException();
         }
         ValidateRequest.checkName(restaurant.getName());

@@ -15,7 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static com.hexagonal.ms_foodcourt.domain.utils.Constants.ADMIN;
+import static com.hexagonal.ms_foodcourt.domain.utils.Constants.ROLE_ADMIN;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.times;
@@ -71,7 +71,7 @@ class RestaurantUseCaseTest {
     void saveRestaurantOwnerNotExistsRoleTest() {
         UserAuth userMock = TestDataRestaurantFactory.mockUserAuth();
         userMock.setId(1L);
-        userMock.setRole(ADMIN);
+        userMock.setRole(ROLE_ADMIN);
         when(userFeignPort.getUserByIdAuth(1L)).thenReturn(Optional.of(userMock));
         saveRestaurantError(userMock);
     }

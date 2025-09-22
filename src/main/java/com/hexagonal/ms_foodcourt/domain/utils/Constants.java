@@ -13,9 +13,10 @@ public class Constants {
     public static final String PATTERN_URL = "^(https?|ftp)://[^\\s/$.?#].[^\\s]*$";
 
     /* ROLE */
-    public static final String ADMIN = "ADMIN";
-    public static final String PROPIETARIO = "PROPIETARIO";
-    public static final String EMPLEADO = "EMPLEADO";
+    public static final String ROLE_ADMIN = "ADMIN";
+    public static final String ROLE_PROPIETARIO = "PROPIETARIO";
+    public static final String ROLE_EMPLEADO = "EMPLEADO";
+    public static final String ROLE_CLIENTE = "CLIENTE";
 
     /* STATUS*/
 

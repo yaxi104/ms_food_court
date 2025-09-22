@@ -12,7 +12,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.Optional;
 
-import static com.hexagonal.ms_foodcourt.domain.utils.Constants.PROPIETARIO;
+import static com.hexagonal.ms_foodcourt.domain.utils.Constants.ROLE_PROPIETARIO;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -43,7 +43,7 @@ class UserDetailServiceAdapterTest {
         mockUser.setRoleId(1L);
 
         when(userFeignPort.getUserByEmail("test@example.com")).thenReturn(Optional.of(mockUser));
-        when(roleFeignPort.getRoleById(1L)).thenReturn(Optional.of(new Role(1L, PROPIETARIO, "mock")));
+        when(roleFeignPort.getRoleById(1L)).thenReturn(Optional.of(new Role(1L, ROLE_PROPIETARIO, "mock")));
 
         UserDetails userDetails = userDetailsService.loadUserByUsername("test@example.com");
 

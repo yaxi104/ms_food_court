@@ -9,7 +9,7 @@ import com.hexagonal.ms_foodcourt.infrastructure.output.jpa.restaurant.entity.Re
 
 import java.time.LocalDate;
 
-import static com.hexagonal.ms_foodcourt.domain.utils.Constants.PROPIETARIO;
+import static com.hexagonal.ms_foodcourt.domain.utils.Constants.ROLE_PROPIETARIO;
 
 
 public class TestDataRestaurantFactory {
@@ -84,7 +84,7 @@ public class TestDataRestaurantFactory {
         user.setId(1L);
         user.setEmail("test@example.com");
         user.setPassword("password123");
-        user.setRole(PROPIETARIO);
+        user.setRole(ROLE_PROPIETARIO);
         return user;
     }
 
