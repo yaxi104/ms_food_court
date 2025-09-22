@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/restaurant")
 @RequiredArgsConstructor
 @Tag(name = "Restaurant", description = "Operations related to restaurants")
 public class RestaurantRestController {
@@ -32,7 +32,7 @@ public class RestaurantRestController {
                     @ApiResponse(responseCode = "400", description = "Invalid request"),
                     @ApiResponse(responseCode = "409", description = "Restaurant already exists")}
     )
-    @PostMapping("/restaurant")
+    @PostMapping("/admin")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> saveRestaurant(@RequestBody RestaurantRequest restaurantRequest) {
         restaurantHandler.saveRestaurant(restaurantRequest);

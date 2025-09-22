@@ -1,7 +1,10 @@
 package com.hexagonal.ms_foodcourt.infrastructure.exceptionhandler;
 
 import com.hexagonal.ms_foodcourt.domain.exception.BadRequestException;
+import com.hexagonal.ms_foodcourt.domain.exception.DishAlreadyExistsException;
+import com.hexagonal.ms_foodcourt.domain.exception.DishNotFoundException;
 import com.hexagonal.ms_foodcourt.domain.exception.RestaurantAlreadyExistsException;
+import com.hexagonal.ms_foodcourt.domain.exception.UserForbiddenException;
 import com.hexagonal.ms_foodcourt.domain.exception.UserNotExistsException;
 import com.hexagonal.ms_foodcourt.infrastructure.exception.NoAuthenticatedUserException;
 import org.springframework.http.HttpStatus;
@@ -45,6 +48,21 @@ public class ControllerAdvisor {
     @ExceptionHandler(NoAuthenticatedUserException.class)
     public ResponseEntity<Map<String, String>> handleNoAuthenticatedUserException(NoAuthenticatedUserException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.singletonMap(MESSAGE, ExceptionResponse.UNATHORIZED_MESSAGE.getMessage()));
+    }
+
+    @ExceptionHandler(UserForbiddenException.class)
+    public ResponseEntity<Map<String, String>> handleUserNonFoundException(UserForbiddenException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Collections.singletonMap(MESSAGE, ExceptionResponse.FORBIDDEN_MESSAGE.getMessage()));
+    }
+
+    @ExceptionHandler(DishNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleDishNotFoundException(DishNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Collections.singletonMap(MESSAGE, ExceptionResponse.BAD_REQUEST_MESSAGE.getMessage()));
+    }
+
+    @ExceptionHandler(DishAlreadyExistsException.class)
+    public ResponseEntity<Map<String, String>> handleDishAlreadyExistsException(DishAlreadyExistsException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Collections.singletonMap(MESSAGE, ExceptionResponse.BAD_REQUEST_MESSAGE.getMessage()));
     }
 
 }

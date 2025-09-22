@@ -1,6 +1,6 @@
-package com.hexagonal.ms_foodcourt.domain.spi;
+package com.hexagonal.ms_foodcourt.domain.usecase.spi;
 
-import com.hexagonal.ms_foodcourt.domain.model.request.User;
+import com.hexagonal.ms_foodcourt.domain.model.User;
 
 import java.util.Optional;
 

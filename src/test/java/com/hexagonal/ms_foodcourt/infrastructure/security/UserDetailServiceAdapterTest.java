@@ -1,7 +1,7 @@
 package com.hexagonal.ms_foodcourt.infrastructure.security;
 
-import com.hexagonal.ms_foodcourt.domain.model.request.User;
-import com.hexagonal.ms_foodcourt.domain.spi.IUserFeignPort;
+import com.hexagonal.ms_foodcourt.domain.model.User;
+import com.hexagonal.ms_foodcourt.domain.usecase.spi.IUserFeignPort;
 import com.hexagonal.ms_foodcourt.infrastructure.security.adapter.UserDetailServiceAdapter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

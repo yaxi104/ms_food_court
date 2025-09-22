@@ -1,6 +1,6 @@
 package com.hexagonal.ms_foodcourt.infrastructure.output.jpa.restaurant.adapter;
 
-import com.hexagonal.ms_foodcourt.domain.model.request.Restaurant;
+import com.hexagonal.ms_foodcourt.domain.model.Restaurant;
 import com.hexagonal.ms_foodcourt.infrastructure.output.jpa.restaurant.entity.RestaurantEntity;
 import com.hexagonal.ms_foodcourt.infrastructure.output.jpa.restaurant.mapper.IRestaurantEntityMapper;
 import com.hexagonal.ms_foodcourt.infrastructure.output.jpa.restaurant.repository.IRestaurantRepository;

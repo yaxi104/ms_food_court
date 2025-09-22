@@ -29,7 +29,7 @@ class SecurityConfigTest {
     @Test
     @WithMockUser(username = "user", roles = {"USER"})
     void whenAccessDeniedTest() throws Exception {
-        mockMvc.perform(post("/api/v1/restaurant"))
+        mockMvc.perform(post("/api/v1/restaurant/admin"))
                 .andExpect(status().isForbidden())
                 .andExpect(content().json("{\"error\": \"Access denied\"}"));
     }

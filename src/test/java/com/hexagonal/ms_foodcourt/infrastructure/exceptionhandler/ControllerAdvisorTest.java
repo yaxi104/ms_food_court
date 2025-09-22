@@ -1,6 +1,7 @@
 package com.hexagonal.ms_foodcourt.infrastructure.exceptionhandler;
 
 import com.hexagonal.ms_foodcourt.domain.exception.BadRequestException;
+import com.hexagonal.ms_foodcourt.domain.exception.DishNotFoundException;
 import com.hexagonal.ms_foodcourt.domain.exception.RestaurantAlreadyExistsException;
 import com.hexagonal.ms_foodcourt.domain.exception.UserNotExistsException;
 import com.hexagonal.ms_foodcourt.infrastructure.exception.NoAuthenticatedUserException;
@@ -13,6 +14,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.mock;
 
 class ControllerAdvisorTest {
 
@@ -45,7 +47,7 @@ class ControllerAdvisorTest {
 
     @Test
     void handleValidationErrorsReturnsBadRequest() {
-        MethodArgumentNotValidException ex = org.mockito.Mockito.mock(MethodArgumentNotValidException.class);
+        MethodArgumentNotValidException ex = mock(MethodArgumentNotValidException.class);
 
         ResponseEntity<Map<String, String>> response = controllerAdvisor.handleValidationErrors(ex);
 
@@ -56,7 +58,7 @@ class ControllerAdvisorTest {
 
     @Test
     void handleBadRequestExceptionReturnsBadRequest() {
-        BadRequestException ex = org.mockito.Mockito.mock(BadRequestException.class);
+        BadRequestException ex = mock(BadRequestException.class);
 
         ResponseEntity<Map<String, String>> response = controllerAdvisor.handleBadRequestException(ex);
 
@@ -66,8 +68,8 @@ class ControllerAdvisorTest {
     }
 
     @Test
-    void handleNoAuthenticatedUserExceptionReturnsUnathorizate() {
-        NoAuthenticatedUserException ex = org.mockito.Mockito.mock(NoAuthenticatedUserException.class);
+    void handleUserNonFoundExceptionReturnsUnathorizate() {
+        NoAuthenticatedUserException ex = mock(NoAuthenticatedUserException.class);
 
         ResponseEntity<Map<String, String>> response = controllerAdvisor.handleNoAuthenticatedUserException(ex);
 
@@ -75,5 +77,28 @@ class ControllerAdvisorTest {
         assertNotNull(response.getBody());
         assertEquals(ExceptionResponse.UNATHORIZED_MESSAGE.getMessage(), response.getBody().get(MESSAGE));
     }
+
+    @Test
+    void handleNoAuthenticatedUserExceptionReturnsForbidden() {
+        NoAuthenticatedUserException ex = mock(NoAuthenticatedUserException.class);
+
+        ResponseEntity<Map<String, String>> response = controllerAdvisor.handleNoAuthenticatedUserException(ex);
+
+        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(ExceptionResponse.UNATHORIZED_MESSAGE.getMessage(), response.getBody().get(MESSAGE));
+    }
+
+    @Test
+    void handleDishNotFoundExceptionReturnsBadRequest() {
+        DishNotFoundException ex = mock(DishNotFoundException.class);
+
+        ResponseEntity<Map<String, String>> response = controllerAdvisor.handleDishNotFoundException(ex);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(ExceptionResponse.BAD_REQUEST_MESSAGE.getMessage(), response.getBody().get(MESSAGE));
+    }
+
 
 }

@@ -29,5 +29,5 @@ public class UserFeign {
 
     private String password;
 
-    private String role;
+    private Long roleId;
 }

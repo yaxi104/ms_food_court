@@ -54,7 +54,7 @@ class RestaurantRestControllerTest {
     void saveUserSuccessTest() throws Exception {
         RestaurantRequest restaurantRequest = TestDataFactory.mockRestaurantRequest();
 
-        mockMvc.perform(post("/api/v1/restaurant")
+        mockMvc.perform(post("/api/v1/restaurant/admin")
                         .with(authentication(SecurityContextHolder.getContext().getAuthentication()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jacksonTester.write(restaurantRequest).getJson()))
@@ -70,7 +70,7 @@ class RestaurantRestControllerTest {
         doThrow(new RestaurantAlreadyExistsException())
                 .when(restaurantHandler).saveRestaurant(any(RestaurantRequest.class));
 
-        mockMvc.perform(post("/api/v1/restaurant")
+        mockMvc.perform(post("/api/v1/restaurant/admin")
                         .with(authentication(SecurityContextHolder.getContext().getAuthentication()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jacksonTester.write(restaurantRequest).getJson()))

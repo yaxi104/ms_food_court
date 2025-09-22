@@ -42,7 +42,9 @@ public class SecurityConfig {
                                 "/favicon.ico",
                                 "/swagger-ui/index.html"
                         ).permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/restaurant").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/restaurant/admin").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/dish/owner").hasRole("PROPIETARIO")
+                        .requestMatchers(HttpMethod.PATCH, "/api/v1/dish/owner").hasRole("PROPIETARIO")
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex -> ex

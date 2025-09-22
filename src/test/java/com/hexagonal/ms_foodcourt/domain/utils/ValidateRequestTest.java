@@ -78,14 +78,14 @@ class ValidateRequestTest {
 
     @Test
     void checkLogoShouldPassWithValidUrl() {
-        assertDoesNotThrow(() -> ValidateRequest.checkLogo("https://example.com/logo.png"));
+        assertDoesNotThrow(() -> ValidateRequest.checkUrl("https://example.com/logo.png"));
     }
 
     @ParameterizedTest
     @NullAndEmptySource
     @ValueSource(strings = {"Logo"})
     void checkLogoShouldThrowExceptionWithInvalidUrl(String arg) {
-        assertThrows(BadRequestException.class, () -> ValidateRequest.checkLogo(arg));
+        assertThrows(BadRequestException.class, () -> ValidateRequest.checkUrl(arg));
     }
 
 }

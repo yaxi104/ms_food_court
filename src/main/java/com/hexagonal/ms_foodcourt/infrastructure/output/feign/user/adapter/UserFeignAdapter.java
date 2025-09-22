@@ -1,9 +1,11 @@
 package com.hexagonal.ms_foodcourt.infrastructure.output.feign.user.adapter;
 
-import com.hexagonal.ms_foodcourt.domain.model.request.User;
-import com.hexagonal.ms_foodcourt.domain.spi.IUserFeignPort;
+import com.hexagonal.ms_foodcourt.domain.model.User;
+import com.hexagonal.ms_foodcourt.domain.model.UserAuth;
+import com.hexagonal.ms_foodcourt.domain.usecase.spi.IUserFeignPort;
 import com.hexagonal.ms_foodcourt.infrastructure.output.feign.user.client.IUserServiceClient;
 import com.hexagonal.ms_foodcourt.infrastructure.output.feign.user.mapper.IUserFeignMapper;
+import com.hexagonal.ms_foodcourt.infrastructure.output.feign.user.model.UserAuthFeign;
 import com.hexagonal.ms_foodcourt.infrastructure.output.feign.user.model.UserFeign;
 import feign.FeignException;
 import org.springframework.stereotype.Service;
@@ -41,4 +43,15 @@ public class UserFeignAdapter implements IUserFeignPort {
             return Optional.empty();
         }
     }
+
+    @Override
+    public Optional<UserAuth> getUserByIdAuth(Long id) {
+        try {
+            UserAuthFeign userAuthFeign = userServiceClient.getUserByIdAuth(id);
+            return Optional.of(userFeignMapper.toUserAuth(userAuthFeign));
+        } catch (FeignException.NotFound e) {
+            return Optional.empty();
+        }
+    }
+
 }

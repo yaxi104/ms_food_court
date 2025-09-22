@@ -3,10 +3,15 @@ package com.hexagonal.ms_foodcourt.domain.usecase;
 import com.hexagonal.ms_foodcourt.domain.api.IRestaurantServicePort;
 import com.hexagonal.ms_foodcourt.domain.exception.RestaurantAlreadyExistsException;
 import com.hexagonal.ms_foodcourt.domain.exception.UserNotExistsException;
-import com.hexagonal.ms_foodcourt.domain.model.request.Restaurant;
-import com.hexagonal.ms_foodcourt.domain.spi.IRestaurantPersistencePort;
-import com.hexagonal.ms_foodcourt.domain.spi.IUserFeignPort;
+import com.hexagonal.ms_foodcourt.domain.model.Restaurant;
+import com.hexagonal.ms_foodcourt.domain.model.UserAuth;
+import com.hexagonal.ms_foodcourt.domain.usecase.spi.IRestaurantPersistencePort;
+import com.hexagonal.ms_foodcourt.domain.usecase.spi.IUserFeignPort;
 import com.hexagonal.ms_foodcourt.domain.utils.ValidateRequest;
+
+import java.util.Optional;
+
+import static com.hexagonal.ms_foodcourt.domain.utils.Constants.ROLE_OWNER;
 
 public class RestaurantUseCase implements IRestaurantServicePort {
 
@@ -20,21 +25,23 @@ public class RestaurantUseCase implements IRestaurantServicePort {
 
     @Override
     public void saveRestaurant(Restaurant restaurant) {
-        userFeignPort.getUserByid(restaurant.getOwnerId())
-                .filter(user -> user.getId().equals(restaurant.getOwnerId()))
-                .filter(user -> "PROPIETARIO".equals(user.getRole()))
-                .orElseThrow(UserNotExistsException::new);
+        Optional<UserAuth> user = userFeignPort.getUserByIdAuth(restaurant.getOwnerId());
+        UserAuth userPresent = user.orElseThrow(UserNotExistsException::new);
 
+        if (!userPresent.getId().equals(restaurant.getOwnerId()) || !userPresent.getRole().equals(ROLE_OWNER)) {
+            throw new UserNotExistsException();
+        }
         ValidateRequest.checkName(restaurant.getName());
         ValidateRequest.checkNit(restaurant.getNit());
         ValidateRequest.checkNotBlank(restaurant.getAddress());
         ValidateRequest.checkNumberPhone(restaurant.getPhoneNumber());
-        ValidateRequest.checkLogo(restaurant.getUrlLogo());
+        ValidateRequest.checkUrl(restaurant.getUrlLogo());
         ValidateRequest.checkNullNumber(restaurant.getOwnerId());
 
-        if (restaurantPersistencePort.findByNit(restaurant.getNit()).isPresent()) {
+        restaurantPersistencePort.findByNit(restaurant.getNit()).ifPresent(nit -> {
             throw new RestaurantAlreadyExistsException();
-        }
+        });
         restaurantPersistencePort.saveRestaurant(restaurant);
     }
+
 }

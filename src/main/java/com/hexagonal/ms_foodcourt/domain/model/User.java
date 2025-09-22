@@ -1,4 +1,4 @@
-package com.hexagonal.ms_foodcourt.domain.model.request;
+package com.hexagonal.ms_foodcourt.domain.model;
 
 import java.time.LocalDate;
 
@@ -12,21 +12,21 @@ public class User {
     private LocalDate dateBirth;
     private String email;
     private String password;
-    private String role;
+    private Long roleId;
 
     public User() {
     }
 
-    public User(Long id, String firstName, String lastName, String phoneNumber, String password, String idNumber, LocalDate dateBirth, String email, String role) {
+    public User(Long id, String firstName, String lastName, String idNumber, String phoneNumber, LocalDate dateBirth, String email, String password, Long roleId) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.phoneNumber = phoneNumber;
-        this.password = password;
         this.idNumber = idNumber;
+        this.phoneNumber = phoneNumber;
         this.dateBirth = dateBirth;
         this.email = email;
-        this.role = role;
+        this.password = password;
+        this.roleId = roleId;
     }
 
     public Long getId() {
@@ -53,30 +53,6 @@ public class User {
         this.lastName = lastName;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
     public String getIdNumber() {
         return idNumber;
     }
@@ -99,5 +75,29 @@ public class User {
 
     public void setDateBirth(LocalDate dateBirth) {
         this.dateBirth = dateBirth;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Long getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(Long roleId) {
+        this.roleId = roleId;
     }
 }

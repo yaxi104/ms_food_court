@@ -49,9 +49,23 @@ public class ValidateRequest {
         checkPattern(numberPhone, PATTERN_NUMBER_PHONE);
     }
 
-    public static void checkLogo(String logo) {
+    public static void checkUrl(String logo) {
         checkNotBlank(logo);
         checkPattern(logo, PATTERN_URL);
+    }
+
+
+
+    public static void checkPositive(Integer number) {
+        if (number == null || number <= 0) {
+            throw new BadRequestException();
+        }
+    }
+
+    public static void checkId(Long number) {
+        if (number == null || number <= 0) {
+            throw new BadRequestException();
+        }
     }
 
     private static void checkMaxLength(String value) {
@@ -59,4 +73,5 @@ public class ValidateRequest {
             throw new BadRequestException();
         }
     }
+
 }

@@ -1,7 +1,7 @@
 package com.hexagonal.ms_foodcourt.infrastructure.output.jpa.restaurant.adapter;
 
-import com.hexagonal.ms_foodcourt.domain.model.request.Restaurant;
-import com.hexagonal.ms_foodcourt.domain.spi.IRestaurantPersistencePort;
+import com.hexagonal.ms_foodcourt.domain.model.Restaurant;
+import com.hexagonal.ms_foodcourt.domain.usecase.spi.IRestaurantPersistencePort;
 import com.hexagonal.ms_foodcourt.infrastructure.output.jpa.restaurant.mapper.IRestaurantEntityMapper;
 import com.hexagonal.ms_foodcourt.infrastructure.output.jpa.restaurant.repository.IRestaurantRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,5 +24,10 @@ public class RestaurantJpaAdapter implements IRestaurantPersistencePort {
     public Optional<Restaurant> findByNit(String nit) {
         return restaurantRepository.findByNit(nit)
                 .map(restaurantEntityMapper::toRestaurant);
+    }
+
+    @Override
+    public boolean existsByIdAndOwnerId(Long idRestaurant, Long idOwner) {
+        return restaurantRepository.existsByIdAndOwnerId(idRestaurant, idOwner);
     }
 }

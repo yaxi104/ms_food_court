@@ -2,10 +2,10 @@ package com.hexagonal.ms_foodcourt.domain.usecase;
 
 import com.hexagonal.ms_foodcourt.domain.exception.RestaurantAlreadyExistsException;
 import com.hexagonal.ms_foodcourt.domain.exception.UserNotExistsException;
-import com.hexagonal.ms_foodcourt.domain.model.request.Restaurant;
-import com.hexagonal.ms_foodcourt.domain.model.request.User;
-import com.hexagonal.ms_foodcourt.domain.spi.IRestaurantPersistencePort;
-import com.hexagonal.ms_foodcourt.domain.spi.IUserFeignPort;
+import com.hexagonal.ms_foodcourt.domain.model.Restaurant;
+import com.hexagonal.ms_foodcourt.domain.model.User;
+import com.hexagonal.ms_foodcourt.domain.usecase.spi.IRestaurantPersistencePort;
+import com.hexagonal.ms_foodcourt.domain.usecase.spi.IUserFeignPort;
 import com.hexagonal.ms_foodcourt.util.TestDataFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

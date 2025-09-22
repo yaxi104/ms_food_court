@@ -1,12 +1,14 @@
 package com.hexagonal.ms_foodcourt.util;
 
 import com.hexagonal.ms_foodcourt.application.dto.request.RestaurantRequest;
-import com.hexagonal.ms_foodcourt.domain.model.request.Restaurant;
-import com.hexagonal.ms_foodcourt.domain.model.request.User;
+import com.hexagonal.ms_foodcourt.domain.model.Restaurant;
+import com.hexagonal.ms_foodcourt.domain.model.User;
 import com.hexagonal.ms_foodcourt.infrastructure.output.feign.user.model.UserFeign;
 import com.hexagonal.ms_foodcourt.infrastructure.output.jpa.restaurant.entity.RestaurantEntity;
 
 import java.time.LocalDate;
+
+import static com.hexagonal.ms_foodcourt.domain.utils.Constants.ROLE_OWNER;
 
 public class TestDataFactory {
 
@@ -56,7 +58,7 @@ public class TestDataFactory {
         user.setDateBirth(LocalDate.of(2000, 9, 17));
         user.setEmail("test@example.com");
         user.setPassword("password123");
-        user.setRole("PROPIETARIO");
+        user.setRole(ROLE_OWNER);
         return user;
     }
 
@@ -70,7 +72,7 @@ public class TestDataFactory {
         user.setDateBirth(LocalDate.of(2000, 9, 17));
         user.setEmail("test@example.com");
         user.setPassword("password123");
-        user.setRole("PROPIETARIO");
+        user.setRole(ROLE_OWNER);
         return user;
     }
 
