@@ -2,9 +2,12 @@ package com.hexagonal.ms_foodcourt.infrastructure.output.jpa.dish.adapter;
 
 import com.hexagonal.ms_foodcourt.domain.model.Dish;
 import com.hexagonal.ms_foodcourt.domain.spi.IDishPersistencePort;
+import com.hexagonal.ms_foodcourt.infrastructure.output.jpa.dish.entity.DishEntity;
 import com.hexagonal.ms_foodcourt.infrastructure.output.jpa.dish.mapper.IDishEntityMapper;
 import com.hexagonal.ms_foodcourt.infrastructure.output.jpa.dish.repository.IDishRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.Optional;
 
@@ -28,5 +31,18 @@ public class DishJpaAdapter implements IDishPersistencePort {
     @Override
     public Optional<Dish> findByNameAndRestaurantId(String name, Long idRestaurante) {
         return dishRepository.findByNameAndRestaurantId(name, idRestaurante).map(dishEntityMapper::toDish);
+    }
+
+
+    public Page<Dish> listDishes(Long restaurantId, Long categoryId, Pageable pageable) {
+        Page<DishEntity> dishEntities;
+
+        if (categoryId != null) {
+            dishEntities = dishRepository.findByRestaurantIdAndCategoryId(restaurantId, categoryId, pageable);
+        } else {
+            dishEntities = dishRepository.findByRestaurantId(restaurantId, pageable);
+        }
+
+        return dishEntities.map(dishEntityMapper::toDish);
     }
 }

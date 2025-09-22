@@ -13,7 +13,10 @@ import com.hexagonal.ms_foodcourt.domain.spi.IDishPersistencePort;
 import com.hexagonal.ms_foodcourt.domain.spi.IRestaurantPersistencePort;
 import com.hexagonal.ms_foodcourt.domain.spi.IUserFeignPort;
 import com.hexagonal.ms_foodcourt.domain.spi.IUserSessionPort;
+import com.hexagonal.ms_foodcourt.domain.utils.PageableHelper;
 import com.hexagonal.ms_foodcourt.domain.utils.ValidateRequest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import static com.hexagonal.ms_foodcourt.domain.utils.Constants.TRUE_STATUS;
 
@@ -86,6 +89,13 @@ public class DishUseCase implements IDishServicePort {
         dishDb.setActive(dish.getActive());
         dishPersistencePort.saveDish(dishDb);
     }
+
+    @Override
+    public Page<Dish> getListDish(Long restaurantId, Long categoryId, int page, int size) {
+        Pageable pageable = PageableHelper.getPageable(page, size, "price");
+        return dishPersistencePort.listDishes(restaurantId, categoryId, pageable);
+    }
+
 
     private void validateOwner(Dish dish) {
         User userOwner = userFeignPort.getUserByEmail(userSessionPort.getCurrentUserEmail()).orElseThrow(UserNotExistsException::new);

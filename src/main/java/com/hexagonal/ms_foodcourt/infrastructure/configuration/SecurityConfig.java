@@ -51,6 +51,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PATCH, "/api/v1/dish/owner").hasRole(ROLE_PROPIETARIO)
                         .requestMatchers(HttpMethod.PATCH, "/api/v1/dish/toggle/status").hasRole(ROLE_PROPIETARIO)
                         .requestMatchers(HttpMethod.GET, "/api/v1/restaurant/all**").hasRole(ROLE_CLIENTE)
+                        .requestMatchers(HttpMethod.GET, "/api/v1/dish/all**").hasRole(ROLE_CLIENTE)
 
                         .anyRequest().authenticated()
                 )

@@ -10,7 +10,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -30,6 +36,9 @@ class DishJpaAdapterTest {
     private IDishEntityMapper dishEntityMapper;
 
     private DishJpaAdapter dishJpaAdapter;
+    private final Long restaurantId = 1L;
+    private final Long categoryId = 2L;
+    private final Pageable pageable = PageRequest.of(0, 10, Sort.by("price").ascending());
 
     @BeforeEach
     void setUp() {
@@ -81,7 +90,6 @@ class DishJpaAdapterTest {
     @Test
     void findByNameAndRestaurantIdSuccess() {
         String name = "Arroz con Pollo";
-        Long restaurantId = 10L;
 
         DishEntity entity = TestDataDishFactory.mockDishEntity();
         Dish domainDish = TestDataDishFactory.mockDish();
@@ -100,7 +108,6 @@ class DishJpaAdapterTest {
     @Test
     void findByNameAndRestaurantIdEmpty() {
         String name = "Arroz con Pollo";
-        Long restaurantId = 10L;
 
         when(dishRepository.findByNameAndRestaurantId(name, restaurantId)).thenReturn(Optional.empty());
 
@@ -109,5 +116,37 @@ class DishJpaAdapterTest {
         assertTrue(result.isEmpty());
         verify(dishRepository).findByNameAndRestaurantId(name, restaurantId);
         verify(dishEntityMapper, never()).toDish(any());
+    }
+
+    @Test
+    void shouldListDishesFilteredByCategory() {
+        DishEntity entity = new DishEntity();
+        Dish domainDish = new Dish();
+
+        Page<DishEntity> entityPage = new PageImpl<>(List.of(entity));
+        when(dishRepository.findByRestaurantIdAndCategoryId(restaurantId, categoryId, pageable)).thenReturn(entityPage);
+        when(dishEntityMapper.toDish(entity)).thenReturn(domainDish);
+
+        Page<Dish> result = dishJpaAdapter.listDishes(restaurantId, categoryId, pageable);
+
+        assertEquals(1, result.getTotalElements());
+        assertEquals(domainDish, result.getContent().get(0));
+        verify(dishRepository).findByRestaurantIdAndCategoryId(restaurantId, categoryId, pageable);
+    }
+
+    @Test
+    void shouldListDishesWithoutCategoryFilter() {
+        DishEntity entity = new DishEntity();
+        Dish domainDish = new Dish();
+
+        Page<DishEntity> entityPage = new PageImpl<>(List.of(entity));
+        when(dishRepository.findByRestaurantId(restaurantId, pageable)).thenReturn(entityPage);
+        when(dishEntityMapper.toDish(entity)).thenReturn(domainDish);
+
+        Page<Dish> result = dishJpaAdapter.listDishes(restaurantId, null, pageable);
+
+        assertEquals(1, result.getTotalElements());
+        assertEquals(domainDish, result.getContent().get(0));
+        verify(dishRepository).findByRestaurantId(restaurantId, pageable);
     }
 }

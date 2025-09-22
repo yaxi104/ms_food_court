@@ -15,10 +15,17 @@ import com.hexagonal.ms_foodcourt.util.TestDataDishFactory;
 import com.hexagonal.ms_foodcourt.util.TestDataUserFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -142,13 +149,36 @@ class DishUseCaseTest {
     void validateCategoryTes() {
         Dish dishDb = TestDataDishFactory.mockDish();
 
-        User user = new User();
-        user.setId(1L);
-
         when(categoryPersistencePort.findById(1L)).thenReturn(Optional.empty());
 
         assertThrows(CategoryNotFoundException.class, () -> {
             dishUseCase.saveDish(dishDb);
         });
+    }
+
+    @Test
+    void getListDishSuccessTest() {
+        Long restaurantId = 1L;
+        Long categoryId = 2L;
+        int page = 0;
+        int size = 5;
+        Pageable pageable = PageRequest.of(page, size, Sort.by("price").ascending());
+
+        Dish dish1 = new Dish(1L, "Hamburguesa", 15000, "Con papas", "https://img.com/1", categoryId, restaurantId, "true");
+        Dish dish2 = new Dish(2L, "Pizza", 20000, "Personal", "https://img.com/2", categoryId, restaurantId, "true");
+
+        List<Dish> dishList = List.of(dish1, dish2);
+        Page<Dish> dishPage = new PageImpl<>(dishList, pageable, dishList.size());
+
+        when(dishPersistencePort.listDishes(restaurantId, categoryId, pageable)).thenReturn(dishPage);
+
+        Page<Dish> result = dishUseCase.getListDish(restaurantId, categoryId, page, size);
+
+        assertNotNull(result);
+        assertEquals(2, result.getContent().size());
+        assertEquals("Hamburguesa", result.getContent().get(0).getName());
+        assertEquals("Pizza", result.getContent().get(1).getName());
+
+        verify(dishPersistencePort).listDishes(restaurantId, categoryId, pageable);
     }
 }
