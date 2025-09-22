@@ -2,9 +2,12 @@ package com.hexagonal.ms_foodcourt.infrastructure.input.rest;
 
 
 import com.hexagonal.ms_foodcourt.application.dto.request.DishRequest;
+import com.hexagonal.ms_foodcourt.application.dto.request.DishToggleStatusRequest;
 import com.hexagonal.ms_foodcourt.application.dto.request.DishUpdateRequest;
 import com.hexagonal.ms_foodcourt.application.handler.IDishHandler;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -28,13 +31,54 @@ public class DishRestController {
     private final IDishHandler dishHandler;
 
     @Operation(
-            summary = "Create dish the menu",
+            summary = "Create a dish",
             description = "Creates a new dish. Only accessible by PROPIETARIO.",
-            security = @SecurityRequirement(name = "basicAuth"),
+            security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                     @ApiResponse(responseCode = "201", description = "Dish created"),
-                    @ApiResponse(responseCode = "400", description = "Invalid request"),
-                    @ApiResponse(responseCode = "409", description = "Dish already exists")}
+                    @ApiResponse(
+                            responseCode = "400", description = "Invalid request",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(
+                                            name = "Bad Request Example",
+                                            value = """
+                                                    {
+                                                        "Message": "The request contains invalid data. Please check the submitted fields and try again"
+                                                    }
+                                                    """
+                                    )
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "403", description = "Not access",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(
+                                            name = "Forbidden Example",
+                                            value = """
+                                                    {
+                                                        "Message": "You do not have permission to access this resource"
+                                                    }
+                                                    """
+                                    )
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "409", description = "Conflict",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(
+                                            name = "Conflict Example",
+                                            value = """
+                                                    {
+                                                        "Message": "Dish already exists"
+                                                    }
+                                                    """
+                                    )
+                            )
+                    )
+            }
     )
     @PostMapping("/owner")
     @PreAuthorize("hasRole('PROPIETARIO')")
@@ -44,18 +88,116 @@ public class DishRestController {
     }
 
     @Operation(
-            summary = "Update dish the menu",
+            summary = "Update a dish",
             description = "Update a dish. Only accessible by PROPIETARIO.",
-            security = @SecurityRequirement(name = "basicAuth"),
+            security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
-                    @ApiResponse(responseCode = "201", description = "Dish created"),
-                    @ApiResponse(responseCode = "400", description = "Invalid request"),
-                    @ApiResponse(responseCode = "409", description = "No data found for the requested petition")}
+                    @ApiResponse(responseCode = "204", description = "Dish updated"),
+                    @ApiResponse(
+                            responseCode = "400", description = "Invalid request",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(
+                                            name = "Bad Request Example",
+                                            value = """
+                                                    {
+                                                        "Message": "The request contains invalid data. Please check the submitted fields and try again"
+                                                    }
+                                                    """
+                                    )
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "403", description = "Not access",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(
+                                            name = "Forbidden Example",
+                                            value = """
+                                                    {
+                                                        "Message": "You do not have permission to access this resource"
+                                                    }
+                                                    """
+                                    )
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "409", description = "Conflict",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(
+                                            name = "Conflict Example",
+                                            value = """
+                                                    {
+                                                        "Message": "No data found for the requested petition"
+                                                    }
+                                                    """
+                                    )
+                            )
+                    )
+            }
     )
     @PatchMapping("/owner")
     @PreAuthorize("hasRole('PROPIETARIO')")
     public ResponseEntity<Void> updateDish(@Valid @RequestBody DishUpdateRequest dishUpdateRequest) {
         dishHandler.updateDish(dishUpdateRequest);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Operation(
+            summary = "Enable or disable a dish",
+            description = "Allows the restaurant owner to enable or disable a dish from their own restaurant's menu.",
+            security = @SecurityRequirement(name = "bearerAuth"),
+            responses = {
+                    @ApiResponse(responseCode = "204", description = "Dish status updated successfully"),
+                    @ApiResponse(
+                            responseCode = "400", description = "Invalid request",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(
+                                            name = "Bad Request Example",
+                                            value = """
+                                                    {
+                                                        "Message": "The request contains invalid data. Please check the submitted fields and try again"
+                                                    }
+                                                    """
+                                    )
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "403", description = "Not access",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(
+                                            name = "Forbidden Example",
+                                            value = """
+                                                    {
+                                                        "Message": "You do not have permission to access this resource"
+                                                    }
+                                                    """
+                                    )
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "409", description = "Conflict",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(
+                                            name = "Conflict Example",
+                                            value = """
+                                                    {
+                                                        "Message": "User already exists"
+                                                    }
+                                                    """
+                                    )
+                            )
+                    )
+            }
+    )
+    @PatchMapping("/toggle/status")
+    @PreAuthorize("hasRole('PROPIETARIO')")
+    public ResponseEntity<Void> toggleDishStatus(@RequestBody DishToggleStatusRequest dishToggleStatusRequest) {
+        dishHandler.toggleDishStatus(dishToggleStatusRequest);
         return ResponseEntity.noContent().build();
     }
 }

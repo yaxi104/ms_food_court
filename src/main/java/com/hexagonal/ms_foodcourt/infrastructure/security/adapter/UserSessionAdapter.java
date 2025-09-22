@@ -1,6 +1,6 @@
 package com.hexagonal.ms_foodcourt.infrastructure.security.adapter;
 
-import com.hexagonal.ms_foodcourt.domain.usecase.spi.IUserSessionPort;
+import com.hexagonal.ms_foodcourt.domain.spi.IUserSessionPort;
 import com.hexagonal.ms_foodcourt.infrastructure.exception.NoAuthenticatedUserException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;

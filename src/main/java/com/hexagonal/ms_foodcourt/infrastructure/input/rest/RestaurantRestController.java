@@ -3,6 +3,8 @@ package com.hexagonal.ms_foodcourt.infrastructure.input.rest;
 import com.hexagonal.ms_foodcourt.application.dto.request.RestaurantRequest;
 import com.hexagonal.ms_foodcourt.application.handler.IRestaurantHandler;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -29,8 +31,49 @@ public class RestaurantRestController {
             security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                     @ApiResponse(responseCode = "201", description = "Restaurant created"),
-                    @ApiResponse(responseCode = "400", description = "Invalid request"),
-                    @ApiResponse(responseCode = "409", description = "Restaurant already exists")}
+                    @ApiResponse(
+                            responseCode = "400", description = "Invalid request",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(
+                                            name = "Bad Request Example",
+                                            value = """
+                                                    {
+                                                        "Message": "The request contains invalid data. Please check the submitted fields and try again"
+                                                    }
+                                                    """
+                                    )
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "403", description = "Not access",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(
+                                            name = "Forbidden Example",
+                                            value = """
+                                                    {
+                                                        "Message": "You do not have permission to access this resource"
+                                                    }
+                                                    """
+                                    )
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "409", description = "Conflict",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(
+                                            name = "Conflict Example",
+                                            value = """
+                                                    {
+                                                        "Message": "Restaurant already exists"
+                                                    }
+                                                    """
+                                    )
+                            )
+                    )
+            }
     )
     @PostMapping("/admin")
     @PreAuthorize("hasRole('ADMIN')")

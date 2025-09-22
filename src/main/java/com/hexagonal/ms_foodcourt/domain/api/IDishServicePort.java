@@ -8,4 +8,6 @@ public interface IDishServicePort {
 
     void updateDish(Dish dish);
 
+    void toggleStatusDish(Dish dish);
+
 }

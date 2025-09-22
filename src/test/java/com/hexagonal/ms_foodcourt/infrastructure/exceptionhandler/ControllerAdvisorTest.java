@@ -1,8 +1,11 @@
 package com.hexagonal.ms_foodcourt.infrastructure.exceptionhandler;
 
 import com.hexagonal.ms_foodcourt.domain.exception.BadRequestException;
+import com.hexagonal.ms_foodcourt.domain.exception.CategoryNotFoundException;
+import com.hexagonal.ms_foodcourt.domain.exception.DishAlreadyExistsException;
 import com.hexagonal.ms_foodcourt.domain.exception.DishNotFoundException;
 import com.hexagonal.ms_foodcourt.domain.exception.RestaurantAlreadyExistsException;
+import com.hexagonal.ms_foodcourt.domain.exception.UserForbiddenException;
 import com.hexagonal.ms_foodcourt.domain.exception.UserNotExistsException;
 import com.hexagonal.ms_foodcourt.infrastructure.exception.NoAuthenticatedUserException;
 import org.junit.jupiter.api.Test;
@@ -79,17 +82,6 @@ class ControllerAdvisorTest {
     }
 
     @Test
-    void handleNoAuthenticatedUserExceptionReturnsForbidden() {
-        NoAuthenticatedUserException ex = mock(NoAuthenticatedUserException.class);
-
-        ResponseEntity<Map<String, String>> response = controllerAdvisor.handleNoAuthenticatedUserException(ex);
-
-        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals(ExceptionResponse.UNATHORIZED_MESSAGE.getMessage(), response.getBody().get(MESSAGE));
-    }
-
-    @Test
     void handleDishNotFoundExceptionReturnsBadRequest() {
         DishNotFoundException ex = mock(DishNotFoundException.class);
 
@@ -100,5 +92,37 @@ class ControllerAdvisorTest {
         assertEquals(ExceptionResponse.BAD_REQUEST_MESSAGE.getMessage(), response.getBody().get(MESSAGE));
     }
 
+    @Test
+    void handleUserForbiddenExceptionReturnsForbidden() {
+        UserForbiddenException ex = mock(UserForbiddenException.class);
+
+        ResponseEntity<Map<String, String>> response = controllerAdvisor.handleUserNonFoundException(ex);
+
+        assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(ExceptionResponse.FORBIDDEN_MESSAGE.getMessage(), response.getBody().get(MESSAGE));
+    }
+
+    @Test
+    void handleDishAlreadyExistsExceptionReturnsBadRequest() {
+        DishAlreadyExistsException ex = mock(DishAlreadyExistsException.class);
+
+        ResponseEntity<Map<String, String>> response = controllerAdvisor.handleDishAlreadyExistsException(ex);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(ExceptionResponse.BAD_REQUEST_MESSAGE.getMessage(), response.getBody().get(MESSAGE));
+    }
+
+    @Test
+    void handleCategoryNotFoundExceptionReturnsBadRequest() {
+        CategoryNotFoundException ex = mock(CategoryNotFoundException.class);
+
+        ResponseEntity<Map<String, String>> response = controllerAdvisor.handleCategoryNotFoundException(ex);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(ExceptionResponse.BAD_REQUEST_MESSAGE.getMessage(), response.getBody().get(MESSAGE));
+    }
 
 }

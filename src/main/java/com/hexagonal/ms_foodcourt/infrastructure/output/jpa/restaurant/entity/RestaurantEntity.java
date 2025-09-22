@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "restaurants")
+@Table(name = "RESTAURANTES")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -23,22 +23,22 @@ public class RestaurantEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name", nullable = false, length = 100)
+    @Column(name = "nombre", nullable = false, length = 100)
     private String name;
 
     @Column(name = "nit", nullable = false, length = 20, unique = true)
     private String nit;
 
-    @Column(name = "address", nullable = false)
+    @Column(name = "direccion", nullable = false)
     private String address;
 
-    @Column(name = "phone_number", nullable = false, length = 13)
+    @Column(name = "telefono", nullable = false, length = 13)
     private String phoneNumber;
 
     @Column(name = "url_logo", nullable = false)
     private String urlLogo;
 
-    @Column(name = "owner_id", nullable = false)
+    @Column(name = "id_propietario", nullable = false)
     private Long ownerId;
 
 }

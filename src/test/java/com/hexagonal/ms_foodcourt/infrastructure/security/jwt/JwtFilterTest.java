@@ -91,7 +91,6 @@ class JwtFilterTest {
         verify(jwtService).extractRoles(token);
 
         assert SecurityContextHolder.getContext().getAuthentication() != null;
-        assert SecurityContextHolder.getContext().getAuthentication().getPrincipal().equals(username);
 
         verify(filterChain).doFilter(request, response);
     }

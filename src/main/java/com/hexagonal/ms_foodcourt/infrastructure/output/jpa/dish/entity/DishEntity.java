@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "dishs")
+@Table(name = "PLATOS")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -23,25 +23,25 @@ public class DishEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name", nullable = false, length = 100, unique = true)
+    @Column(name = "nombre", nullable = false, length = 100, unique = true)
     private String name;
 
-    @Column(name = "price", nullable = false)
+    @Column(name = "precio", nullable = false)
     private Integer price;
 
-    @Column(name = "description", nullable = false, length = 1000)
+    @Column(name = "descripcion", nullable = false)
     private String description;
 
-    @Column(name = "image_url", nullable = false)
+    @Column(name = "url_imagen", nullable = false)
     private String imageUrl;
 
-    @Column(name = "category", nullable = false)
-    private String category;
+    @Column(name = "id_categoria", nullable = false)
+    private Long categoryId;
 
-    @Column(name = "restaurant_id", nullable = false)
+    @Column(name = "id_restaurante", nullable = false)
     private Long restaurantId;
 
-    @Column(name = "active", nullable = false)
-    private Boolean active;
+    @Column(name = "activo", nullable = false, length = 5)
+    private String active;
 
 }

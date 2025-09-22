@@ -1,17 +1,21 @@
 package com.hexagonal.ms_foodcourt.domain.usecase;
 
 import com.hexagonal.ms_foodcourt.domain.api.IDishServicePort;
+import com.hexagonal.ms_foodcourt.domain.exception.CategoryNotFoundException;
 import com.hexagonal.ms_foodcourt.domain.exception.DishAlreadyExistsException;
 import com.hexagonal.ms_foodcourt.domain.exception.DishNotFoundException;
 import com.hexagonal.ms_foodcourt.domain.exception.UserForbiddenException;
 import com.hexagonal.ms_foodcourt.domain.exception.UserNotExistsException;
 import com.hexagonal.ms_foodcourt.domain.model.Dish;
 import com.hexagonal.ms_foodcourt.domain.model.User;
-import com.hexagonal.ms_foodcourt.domain.usecase.spi.IDishPersistencePort;
-import com.hexagonal.ms_foodcourt.domain.usecase.spi.IRestaurantPersistencePort;
-import com.hexagonal.ms_foodcourt.domain.usecase.spi.IUserFeignPort;
-import com.hexagonal.ms_foodcourt.domain.usecase.spi.IUserSessionPort;
+import com.hexagonal.ms_foodcourt.domain.spi.ICategoryPersistencePort;
+import com.hexagonal.ms_foodcourt.domain.spi.IDishPersistencePort;
+import com.hexagonal.ms_foodcourt.domain.spi.IRestaurantPersistencePort;
+import com.hexagonal.ms_foodcourt.domain.spi.IUserFeignPort;
+import com.hexagonal.ms_foodcourt.domain.spi.IUserSessionPort;
 import com.hexagonal.ms_foodcourt.domain.utils.ValidateRequest;
+
+import static com.hexagonal.ms_foodcourt.domain.utils.Constants.TRUE_STATUS;
 
 public class DishUseCase implements IDishServicePort {
 
@@ -19,29 +23,33 @@ public class DishUseCase implements IDishServicePort {
     private final IRestaurantPersistencePort restaurantPersistencePort;
     private final IUserFeignPort userFeignPort;
     private final IUserSessionPort userSessionPort;
+    private final ICategoryPersistencePort categoryPersistencePort;
 
     public DishUseCase(IDishPersistencePort dishPersistencePort,
                        IRestaurantPersistencePort restaurantPersistencePort,
                        IUserFeignPort userFeignPort,
-                       IUserSessionPort userSessionPort) {
+                       IUserSessionPort userSessionPort,
+                       ICategoryPersistencePort categoryPersistencePort) {
         this.dishPersistencePort = dishPersistencePort;
         this.restaurantPersistencePort = restaurantPersistencePort;
         this.userFeignPort = userFeignPort;
         this.userSessionPort = userSessionPort;
-
+        this.categoryPersistencePort = categoryPersistencePort;
     }
 
     @Override
     public void saveDish(Dish dish) {
+        Long categoryId = dish.getCategoryId();
+        ValidateRequest.checkId(categoryId);
+        categoryPersistencePort.findById(categoryId).orElseThrow(CategoryNotFoundException::new);
         ValidateRequest.checkNotBlank(dish.getName());
         ValidateRequest.checkPositive(dish.getPrice());
         ValidateRequest.checkNotBlank(dish.getDescription());
         ValidateRequest.checkUrl(dish.getImageUrl());
-        ValidateRequest.checkNotBlank(dish.getCategory());
         ValidateRequest.checkId(dish.getRestaurantId());
         validateOwner(dish);
 
-        dish.setActive(true);
+        dish.setActive(TRUE_STATUS);
 
         dishPersistencePort.findByNameAndRestaurantId(dish.getName(), dish.getRestaurantId()).ifPresent(d -> {
             throw new DishAlreadyExistsException();
@@ -65,6 +73,17 @@ public class DishUseCase implements IDishServicePort {
         if (description != null && !description.isBlank()) {
             dishDb.setDescription(dish.getDescription());
         }
+        dishPersistencePort.saveDish(dishDb);
+    }
+
+    @Override
+    public void toggleStatusDish(Dish dish) {
+        Long id = dish.getId();
+        ValidateRequest.checkId(id);
+        ValidateRequest.checkStatus(dish.getActive());
+        Dish dishDb = dishPersistencePort.findById(id).orElseThrow(DishNotFoundException::new);
+        validateOwner(dishDb);
+        dishDb.setActive(dish.getActive());
         dishPersistencePort.saveDish(dishDb);
     }
 

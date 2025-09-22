@@ -15,6 +15,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import static com.hexagonal.ms_foodcourt.domain.utils.Constants.ADMIN;
+import static com.hexagonal.ms_foodcourt.domain.utils.Constants.PROPIETARIO;
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -42,9 +45,10 @@ public class SecurityConfig {
                                 "/favicon.ico",
                                 "/swagger-ui/index.html"
                         ).permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/restaurant/admin").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/api/v1/dish/owner").hasRole("PROPIETARIO")
-                        .requestMatchers(HttpMethod.PATCH, "/api/v1/dish/owner").hasRole("PROPIETARIO")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/restaurant/admin").hasRole(ADMIN)
+                        .requestMatchers(HttpMethod.POST, "/api/v1/dish/owner").hasRole(PROPIETARIO)
+                        .requestMatchers(HttpMethod.PATCH, "/api/v1/dish/owner").hasRole(PROPIETARIO)
+                        .requestMatchers(HttpMethod.PATCH, "/api/v1/dish/toggle/status").hasRole(PROPIETARIO)
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex -> ex

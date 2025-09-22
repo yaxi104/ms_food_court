@@ -18,7 +18,7 @@ public class DishUpdateRequest {
 
     @Positive(message = "Valor no válido")
     @Schema(description = "Precio del plato en números enteros", example = "15000")
-    private Long price;
+    private Integer price;
 
     @Schema(description = "Descripción del plato", example = "Jugosa hamburguesa con queso cheddar, lechuga y tomate.")
     private String description;

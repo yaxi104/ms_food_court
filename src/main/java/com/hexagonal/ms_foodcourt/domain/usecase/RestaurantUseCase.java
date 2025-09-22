@@ -5,13 +5,13 @@ import com.hexagonal.ms_foodcourt.domain.exception.RestaurantAlreadyExistsExcept
 import com.hexagonal.ms_foodcourt.domain.exception.UserNotExistsException;
 import com.hexagonal.ms_foodcourt.domain.model.Restaurant;
 import com.hexagonal.ms_foodcourt.domain.model.UserAuth;
-import com.hexagonal.ms_foodcourt.domain.usecase.spi.IRestaurantPersistencePort;
-import com.hexagonal.ms_foodcourt.domain.usecase.spi.IUserFeignPort;
+import com.hexagonal.ms_foodcourt.domain.spi.IRestaurantPersistencePort;
+import com.hexagonal.ms_foodcourt.domain.spi.IUserFeignPort;
 import com.hexagonal.ms_foodcourt.domain.utils.ValidateRequest;
 
 import java.util.Optional;
 
-import static com.hexagonal.ms_foodcourt.domain.utils.Constants.ROLE_OWNER;
+import static com.hexagonal.ms_foodcourt.domain.utils.Constants.PROPIETARIO;
 
 public class RestaurantUseCase implements IRestaurantServicePort {
 
@@ -28,7 +28,7 @@ public class RestaurantUseCase implements IRestaurantServicePort {
         Optional<UserAuth> user = userFeignPort.getUserByIdAuth(restaurant.getOwnerId());
         UserAuth userPresent = user.orElseThrow(UserNotExistsException::new);
 
-        if (!userPresent.getId().equals(restaurant.getOwnerId()) || !userPresent.getRole().equals(ROLE_OWNER)) {
+        if (!userPresent.getId().equals(restaurant.getOwnerId()) || !userPresent.getRole().equals(PROPIETARIO)) {
             throw new UserNotExistsException();
         }
         ValidateRequest.checkName(restaurant.getName());

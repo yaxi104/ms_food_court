@@ -1,6 +1,7 @@
 package com.hexagonal.ms_foodcourt.infrastructure.exceptionhandler;
 
 import com.hexagonal.ms_foodcourt.domain.exception.BadRequestException;
+import com.hexagonal.ms_foodcourt.domain.exception.CategoryNotFoundException;
 import com.hexagonal.ms_foodcourt.domain.exception.DishAlreadyExistsException;
 import com.hexagonal.ms_foodcourt.domain.exception.DishNotFoundException;
 import com.hexagonal.ms_foodcourt.domain.exception.RestaurantAlreadyExistsException;
@@ -62,6 +63,11 @@ public class ControllerAdvisor {
 
     @ExceptionHandler(DishAlreadyExistsException.class)
     public ResponseEntity<Map<String, String>> handleDishAlreadyExistsException(DishAlreadyExistsException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Collections.singletonMap(MESSAGE, ExceptionResponse.BAD_REQUEST_MESSAGE.getMessage()));
+    }
+
+    @ExceptionHandler(CategoryNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleCategoryNotFoundException(CategoryNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Collections.singletonMap(MESSAGE, ExceptionResponse.BAD_REQUEST_MESSAGE.getMessage()));
     }
 

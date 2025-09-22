@@ -2,6 +2,7 @@ package com.hexagonal.ms_foodcourt.application.handler.impl;
 
 
 import com.hexagonal.ms_foodcourt.application.dto.request.DishRequest;
+import com.hexagonal.ms_foodcourt.application.dto.request.DishToggleStatusRequest;
 import com.hexagonal.ms_foodcourt.application.dto.request.DishUpdateRequest;
 import com.hexagonal.ms_foodcourt.application.handler.IDishHandler;
 import com.hexagonal.ms_foodcourt.application.mapper.IDishRequestMapper;
@@ -26,6 +27,11 @@ public class DishHandler implements IDishHandler {
     @Override
     public void updateDish(DishUpdateRequest dishUpdateRequest) {
         dishServicePort.updateDish(dishRequestMapper.toDishUpdate(dishUpdateRequest));
+    }
+
+    @Override
+    public void toggleDishStatus(DishToggleStatusRequest dishToggleStatusRequest) {
+        dishServicePort.toggleStatusDish(dishRequestMapper.toDishToggleStatus(dishToggleStatusRequest));
     }
 
 }

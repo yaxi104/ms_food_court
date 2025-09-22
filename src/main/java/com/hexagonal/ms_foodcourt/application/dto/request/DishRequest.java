@@ -33,9 +33,9 @@ public class DishRequest {
     @Schema(description = "URL de la imagen del plato", example = "https://miapp.com/imagenes/hamburguesa.jpg")
     private String imageUrl;
 
-    @NotBlank
-    @Schema(description = "Categoría del plato", example = "Comida rápida")
-    private String category;
+    @NotNull
+    @Schema(description = "Categoría del plato", example = "1")
+    private Long categoryId;
 
     @NotNull
     @Schema(description = "ID del restaurante al que pertenece el plato", example = "10")

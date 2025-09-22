@@ -1,7 +1,7 @@
 package com.hexagonal.ms_foodcourt.infrastructure.output.jpa.dish.adapter;
 
 import com.hexagonal.ms_foodcourt.domain.model.Dish;
-import com.hexagonal.ms_foodcourt.domain.usecase.spi.IDishPersistencePort;
+import com.hexagonal.ms_foodcourt.domain.spi.IDishPersistencePort;
 import com.hexagonal.ms_foodcourt.infrastructure.output.jpa.dish.mapper.IDishEntityMapper;
 import com.hexagonal.ms_foodcourt.infrastructure.output.jpa.dish.repository.IDishRepository;
 import lombok.RequiredArgsConstructor;

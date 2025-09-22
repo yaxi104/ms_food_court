@@ -1,6 +1,7 @@
 package com.hexagonal.ms_foodcourt.domain.utils;
 
 import com.hexagonal.ms_foodcourt.domain.exception.BadRequestException;
+import jakarta.validation.constraints.Null;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
@@ -88,5 +89,22 @@ class ValidateRequestTest {
         assertThrows(BadRequestException.class, () -> ValidateRequest.checkUrl(arg));
     }
 
+    @ParameterizedTest
+    @ValueSource(ints = {-5, 0})
+    void checkPositiveThrowBadRequestException(Integer arg) {
+        assertThrows(BadRequestException.class, () -> ValidateRequest.checkPositive(arg));
+    }
+
+    @ParameterizedTest
+    @ValueSource(longs = {-1L, 0})
+    void checkIdThrowBadRequestException(Long arg) {
+        assertThrows(BadRequestException.class, () -> ValidateRequest.checkId(arg));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"-1L", "verdad"})
+    void checkStatusThrowBadRequestException(String arg) {
+        assertThrows(BadRequestException.class, () -> ValidateRequest.checkStatus(arg));
+    }
 }
 

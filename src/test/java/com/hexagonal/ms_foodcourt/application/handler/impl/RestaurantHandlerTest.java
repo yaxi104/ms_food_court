@@ -2,7 +2,7 @@ package com.hexagonal.ms_foodcourt.application.handler.impl;
 
 import com.hexagonal.ms_foodcourt.application.mapper.IRestaurantRequestMapper;
 import com.hexagonal.ms_foodcourt.domain.api.IRestaurantServicePort;
-import com.hexagonal.ms_foodcourt.util.TestDataFactory;
+import com.hexagonal.ms_foodcourt.util.TestDataRestaurantFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -25,8 +25,8 @@ class RestaurantHandlerTest {
 
     @Test
     void saveRestaurantSuccessTest() {
-        var restaurantRequest = TestDataFactory.mockRestaurantRequest();
-        var mockRestaurant = TestDataFactory.mockRestaurant();
+        var restaurantRequest = TestDataRestaurantFactory.mockRestaurantRequest();
+        var mockRestaurant = TestDataRestaurantFactory.mockRestaurant();
 
         when(restaurantRequestMapper.toRestaurant(restaurantRequest)).thenReturn(mockRestaurant);
 

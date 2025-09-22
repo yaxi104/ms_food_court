@@ -12,22 +12,22 @@ public class Dish {
 
     private String imageUrl;
 
-    private String category;
+    private Long categoryId;
 
     private Long restaurantId;
 
-    private Boolean active;
+    private String active;
 
     public Dish() {
     }
 
-    public Dish(Long id, String name, Integer price, String description, String imageUrl, String category, Long restaurantId, Boolean active) {
+    public Dish(Long id, String name, Integer price, String description, String imageUrl, Long categoryId, Long restaurantId, String active) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.description = description;
         this.imageUrl = imageUrl;
-        this.category = category;
+        this.categoryId = categoryId;
         this.restaurantId = restaurantId;
         this.active = active;
     }
@@ -72,12 +72,12 @@ public class Dish {
         this.imageUrl = imageUrl;
     }
 
-    public String getCategory() {
-        return category;
+    public Long getCategoryId() {
+        return categoryId;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
     }
 
     public Long getRestaurantId() {
@@ -88,11 +88,11 @@ public class Dish {
         this.restaurantId = restaurantId;
     }
 
-    public Boolean getActive() {
+    public String getActive() {
         return active;
     }
 
-    public void setActive(Boolean active) {
+    public void setActive(String active) {
         this.active = active;
     }
 }

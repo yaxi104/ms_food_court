@@ -2,7 +2,7 @@ package com.hexagonal.ms_foodcourt.infrastructure.output.feign.user.adapter;
 
 import com.hexagonal.ms_foodcourt.domain.model.User;
 import com.hexagonal.ms_foodcourt.domain.model.UserAuth;
-import com.hexagonal.ms_foodcourt.domain.usecase.spi.IUserFeignPort;
+import com.hexagonal.ms_foodcourt.domain.spi.IUserFeignPort;
 import com.hexagonal.ms_foodcourt.infrastructure.output.feign.user.client.IUserServiceClient;
 import com.hexagonal.ms_foodcourt.infrastructure.output.feign.user.mapper.IUserFeignMapper;
 import com.hexagonal.ms_foodcourt.infrastructure.output.feign.user.model.UserAuthFeign;

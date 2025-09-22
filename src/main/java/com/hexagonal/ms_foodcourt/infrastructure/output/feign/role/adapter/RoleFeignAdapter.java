@@ -1,7 +1,7 @@
 package com.hexagonal.ms_foodcourt.infrastructure.output.feign.role.adapter;
 
 import com.hexagonal.ms_foodcourt.domain.model.Role;
-import com.hexagonal.ms_foodcourt.domain.usecase.spi.IRoleFeignPort;
+import com.hexagonal.ms_foodcourt.domain.spi.IRoleFeignPort;
 import com.hexagonal.ms_foodcourt.infrastructure.output.feign.role.client.IRoleServiceClient;
 import com.hexagonal.ms_foodcourt.infrastructure.output.feign.role.mapper.IRoleFeignMapper;
 import com.hexagonal.ms_foodcourt.infrastructure.output.feign.role.model.RoleFeign;

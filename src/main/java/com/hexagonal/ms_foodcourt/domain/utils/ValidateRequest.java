@@ -4,11 +4,13 @@ import com.hexagonal.ms_foodcourt.domain.exception.BadRequestException;
 
 import java.util.regex.Pattern;
 
+import static com.hexagonal.ms_foodcourt.domain.utils.Constants.FALSE_STATUS;
 import static com.hexagonal.ms_foodcourt.domain.utils.Constants.MAX_LENGTH;
 import static com.hexagonal.ms_foodcourt.domain.utils.Constants.PATTERN_NAME;
 import static com.hexagonal.ms_foodcourt.domain.utils.Constants.PATTERN_NUMBER_PHONE;
 import static com.hexagonal.ms_foodcourt.domain.utils.Constants.PATTERN_ONLY_NUMBER;
 import static com.hexagonal.ms_foodcourt.domain.utils.Constants.PATTERN_URL;
+import static com.hexagonal.ms_foodcourt.domain.utils.Constants.TRUE_STATUS;
 
 public class ValidateRequest {
 
@@ -55,7 +57,6 @@ public class ValidateRequest {
     }
 
 
-
     public static void checkPositive(Integer number) {
         if (number == null || number <= 0) {
             throw new BadRequestException();
@@ -70,6 +71,13 @@ public class ValidateRequest {
 
     private static void checkMaxLength(String value) {
         if (value.length() > MAX_LENGTH) {
+            throw new BadRequestException();
+        }
+    }
+
+    public static void checkStatus(String active) {
+        ValidateRequest.checkNotBlank(active);
+        if (!active.equals(TRUE_STATUS) && !active.equals(FALSE_STATUS)) {
             throw new BadRequestException();
         }
     }

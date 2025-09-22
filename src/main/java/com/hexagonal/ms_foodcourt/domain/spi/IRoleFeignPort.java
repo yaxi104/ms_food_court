@@ -1,4 +1,4 @@
-package com.hexagonal.ms_foodcourt.domain.usecase.spi;
+package com.hexagonal.ms_foodcourt.domain.spi;
 
 import com.hexagonal.ms_foodcourt.domain.model.Role;
 

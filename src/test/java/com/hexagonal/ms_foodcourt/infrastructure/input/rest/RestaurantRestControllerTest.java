@@ -7,7 +7,7 @@ import com.hexagonal.ms_foodcourt.application.dto.request.RestaurantRequest;
 import com.hexagonal.ms_foodcourt.application.handler.IRestaurantHandler;
 import com.hexagonal.ms_foodcourt.domain.exception.RestaurantAlreadyExistsException;
 import com.hexagonal.ms_foodcourt.infrastructure.exceptionhandler.ControllerAdvisor;
-import com.hexagonal.ms_foodcourt.util.TestDataFactory;
+import com.hexagonal.ms_foodcourt.util.TestDataRestaurantFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.json.JacksonTester;
@@ -52,7 +52,7 @@ class RestaurantRestControllerTest {
 
     @Test
     void saveUserSuccessTest() throws Exception {
-        RestaurantRequest restaurantRequest = TestDataFactory.mockRestaurantRequest();
+        RestaurantRequest restaurantRequest = TestDataRestaurantFactory.mockRestaurantRequest();
 
         mockMvc.perform(post("/api/v1/restaurant/admin")
                         .with(authentication(SecurityContextHolder.getContext().getAuthentication()))
@@ -65,7 +65,7 @@ class RestaurantRestControllerTest {
 
     @Test
     void saveUserAlreadyExistsTest() throws Exception {
-        RestaurantRequest restaurantRequest = TestDataFactory.mockRestaurantRequest();
+        RestaurantRequest restaurantRequest = TestDataRestaurantFactory.mockRestaurantRequest();
 
         doThrow(new RestaurantAlreadyExistsException())
                 .when(restaurantHandler).saveRestaurant(any(RestaurantRequest.class));

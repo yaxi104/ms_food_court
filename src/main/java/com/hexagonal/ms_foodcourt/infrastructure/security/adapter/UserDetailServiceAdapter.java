@@ -1,7 +1,7 @@
 package com.hexagonal.ms_foodcourt.infrastructure.security.adapter;
 
-import com.hexagonal.ms_foodcourt.domain.usecase.spi.IRoleFeignPort;
-import com.hexagonal.ms_foodcourt.domain.usecase.spi.IUserFeignPort;
+import com.hexagonal.ms_foodcourt.domain.spi.IRoleFeignPort;
+import com.hexagonal.ms_foodcourt.domain.spi.IUserFeignPort;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
