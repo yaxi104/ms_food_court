@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -33,7 +34,7 @@ public class DishJpaAdapter implements IDishPersistencePort {
         return dishRepository.findByNameAndRestaurantId(name, idRestaurante).map(dishEntityMapper::toDish);
     }
 
-
+    @Override
     public Page<Dish> listDishes(Long restaurantId, Long categoryId, Pageable pageable) {
         Page<DishEntity> dishEntities;
 
@@ -44,5 +45,10 @@ public class DishJpaAdapter implements IDishPersistencePort {
         }
 
         return dishEntities.map(dishEntityMapper::toDish);
+    }
+
+    @Override
+    public Long countValidDishesByRestaurant(List<Long> dishIds, Long restaurantId) {
+        return dishRepository.countValidDishesByRestaurant(dishIds, restaurantId);
     }
 }

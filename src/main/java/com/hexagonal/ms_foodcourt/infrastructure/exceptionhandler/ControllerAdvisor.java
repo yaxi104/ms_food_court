@@ -4,6 +4,8 @@ import com.hexagonal.ms_foodcourt.domain.exception.BadRequestException;
 import com.hexagonal.ms_foodcourt.domain.exception.CategoryNotFoundException;
 import com.hexagonal.ms_foodcourt.domain.exception.DishAlreadyExistsException;
 import com.hexagonal.ms_foodcourt.domain.exception.DishNotFoundException;
+import com.hexagonal.ms_foodcourt.domain.exception.DishNotRestaurantException;
+import com.hexagonal.ms_foodcourt.domain.exception.OrdenByIdClientExistsException;
 import com.hexagonal.ms_foodcourt.domain.exception.RestaurantAlreadyExistsException;
 import com.hexagonal.ms_foodcourt.domain.exception.UserForbiddenException;
 import com.hexagonal.ms_foodcourt.domain.exception.UserNotExistsException;
@@ -71,4 +73,13 @@ public class ControllerAdvisor {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Collections.singletonMap(MESSAGE, ExceptionResponse.BAD_REQUEST_MESSAGE.getMessage()));
     }
 
+    @ExceptionHandler(DishNotRestaurantException.class)
+    public ResponseEntity<Map<String, String>> handleDishNotRestaurantException(DishNotRestaurantException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(Collections.singletonMap(MESSAGE, ExceptionResponse.DISH_NOT_RESTAURANT_MESSAGE.getMessage()));
+    }
+
+    @ExceptionHandler(OrdenByIdClientExistsException.class)
+    public ResponseEntity<Map<String, String>> handleOrdenByIdClientExistsException(OrdenByIdClientExistsException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(Collections.singletonMap(MESSAGE, ExceptionResponse.ORDER_CLIENT_EXISTS_MESSAGE.getMessage()));
+    }
 }

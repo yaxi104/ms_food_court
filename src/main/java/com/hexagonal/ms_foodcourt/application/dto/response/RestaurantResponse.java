@@ -7,6 +7,8 @@ import lombok.Setter;
 @Setter
 public class RestaurantResponse {
 
+    private Long id;
+
     private String name;
 
     private String urlLogo;

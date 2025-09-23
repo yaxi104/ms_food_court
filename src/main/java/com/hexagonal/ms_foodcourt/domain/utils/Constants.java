@@ -19,8 +19,13 @@ public class Constants {
     public static final String ROLE_CLIENTE = "CLIENTE";
 
     /* STATUS*/
-
     public static final String TRUE_STATUS = "true";
     public static final String FALSE_STATUS = "false";
 
+    /* STATUS ORDER*/
+    public static final String EN_PREPARACION = "EN_PREPARACION";
+    public static final String PENDIENTE = "PENDIENTE";
+    public static final String LISTO = "LISTO";
+    public static final String ENTREGADO = "ENTREGADO";
+    public static final String CANCELADO = "CANCELADO";
 }

@@ -21,15 +21,39 @@ public class Dish {
     public Dish() {
     }
 
-    public Dish(Long id, String name, Integer price, String description, String imageUrl, Long categoryId, Long restaurantId, String active) {
-        this.id = id;
-        this.name = name;
-        this.price = price;
-        this.description = description;
-        this.imageUrl = imageUrl;
-        this.categoryId = categoryId;
-        this.restaurantId = restaurantId;
-        this.active = active;
+    private Dish(Builder builder) {
+        this.id = builder.id;
+        this.name = builder.name;
+        this.price = builder.price;
+        this.description = builder.description;
+        this.imageUrl = builder.imageUrl;
+        this.categoryId = builder.categoryId;
+        this.restaurantId = builder.restaurantId;
+        this.active = builder.active;
+    }
+
+    public static class Builder {
+        private Long id;
+        private String name;
+        private Integer price;
+        private String description;
+        private String imageUrl;
+        private Long categoryId;
+        private Long restaurantId;
+        private String active;
+
+        public Builder id(Long id) { this.id = id; return this; }
+        public Builder name(String name) { this.name = name; return this; }
+        public Builder price(Integer price) { this.price = price; return this; }
+        public Builder description(String description) { this.description = description; return this; }
+        public Builder imageUrl(String imageUrl) { this.imageUrl = imageUrl; return this; }
+        public Builder categoryId(Long categoryId) { this.categoryId = categoryId; return this; }
+        public Builder restaurantId(Long restaurantId) { this.restaurantId = restaurantId; return this; }
+        public Builder active(String active) { this.active = active; return this; }
+
+        public Dish build() {
+            return new Dish(this);
+        }
     }
 
     public Long getId() {
