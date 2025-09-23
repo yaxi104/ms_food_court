@@ -4,6 +4,8 @@ import com.hexagonal.ms_foodcourt.domain.exception.BadRequestException;
 import com.hexagonal.ms_foodcourt.domain.exception.CategoryNotFoundException;
 import com.hexagonal.ms_foodcourt.domain.exception.DishAlreadyExistsException;
 import com.hexagonal.ms_foodcourt.domain.exception.DishNotFoundException;
+import com.hexagonal.ms_foodcourt.domain.exception.DishNotRestaurantException;
+import com.hexagonal.ms_foodcourt.domain.exception.OrdenByIdClientExistsException;
 import com.hexagonal.ms_foodcourt.domain.exception.RestaurantAlreadyExistsException;
 import com.hexagonal.ms_foodcourt.domain.exception.UserForbiddenException;
 import com.hexagonal.ms_foodcourt.domain.exception.UserNotExistsException;
@@ -87,9 +89,9 @@ class ControllerAdvisorTest {
 
         ResponseEntity<Map<String, String>> response = controllerAdvisor.handleDishNotFoundException(ex);
 
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertEquals(ExceptionResponse.BAD_REQUEST_MESSAGE.getMessage(), response.getBody().get(MESSAGE));
+        assertEquals(ExceptionResponse.DISH_NOT_FOUND.getMessage(), response.getBody().get(MESSAGE));
     }
 
     @Test
@@ -109,9 +111,9 @@ class ControllerAdvisorTest {
 
         ResponseEntity<Map<String, String>> response = controllerAdvisor.handleDishAlreadyExistsException(ex);
 
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertEquals(ExceptionResponse.BAD_REQUEST_MESSAGE.getMessage(), response.getBody().get(MESSAGE));
+        assertEquals(ExceptionResponse.DISH_ALREADY_EXISTS.getMessage(), response.getBody().get(MESSAGE));
     }
 
     @Test
@@ -120,9 +122,30 @@ class ControllerAdvisorTest {
 
         ResponseEntity<Map<String, String>> response = controllerAdvisor.handleCategoryNotFoundException(ex);
 
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertEquals(ExceptionResponse.BAD_REQUEST_MESSAGE.getMessage(), response.getBody().get(MESSAGE));
+        assertEquals(ExceptionResponse.CATEGORY_NOT_FOUND.getMessage(), response.getBody().get(MESSAGE));
     }
 
+    @Test
+    void handleDishNotRestaurantExceptionReturnsConflict() {
+        DishNotRestaurantException ex = mock(DishNotRestaurantException.class);
+
+        ResponseEntity<Map<String, String>> response = controllerAdvisor.handleDishNotRestaurantException(ex);
+
+        assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(ExceptionResponse.DISH_NOT_RESTAURANT.getMessage(), response.getBody().get(MESSAGE));
+    }
+
+    @Test
+    void handleOrdenByIdClientExistsExceptionExceptionReturnsConflict() {
+        OrdenByIdClientExistsException ex = mock(OrdenByIdClientExistsException.class);
+
+        ResponseEntity<Map<String, String>> response = controllerAdvisor.handleOrdenByIdClientExistsException(ex);
+
+        assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(ExceptionResponse.ORDER_CLIENT_EXISTS.getMessage(), response.getBody().get(MESSAGE));
+    }
 }

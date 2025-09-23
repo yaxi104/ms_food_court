@@ -1,7 +1,7 @@
 package com.hexagonal.ms_foodcourt.domain.api;
 
 import com.hexagonal.ms_foodcourt.domain.model.Dish;
-import com.hexagonal.ms_foodcourt.domain.model.PageResult;
+import com.hexagonal.ms_foodcourt.domain.model.response.PageResult;
 
 public interface IDishServicePort {
 

@@ -8,7 +8,7 @@ import com.hexagonal.ms_foodcourt.application.dto.response.DishResponse;
 import com.hexagonal.ms_foodcourt.application.mapper.IDishRequestMapper;
 import com.hexagonal.ms_foodcourt.domain.api.IDishServicePort;
 import com.hexagonal.ms_foodcourt.domain.model.Dish;
-import com.hexagonal.ms_foodcourt.domain.model.PageResult;
+import com.hexagonal.ms_foodcourt.domain.model.response.PageResult;
 import com.hexagonal.ms_foodcourt.util.TestDataDishFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

@@ -60,26 +60,26 @@ public class ControllerAdvisor {
 
     @ExceptionHandler(DishNotFoundException.class)
     public ResponseEntity<Map<String, String>> handleDishNotFoundException(DishNotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Collections.singletonMap(MESSAGE, ExceptionResponse.BAD_REQUEST_MESSAGE.getMessage()));
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(Collections.singletonMap(MESSAGE, ExceptionResponse.DISH_NOT_FOUND.getMessage()));
     }
 
     @ExceptionHandler(DishAlreadyExistsException.class)
     public ResponseEntity<Map<String, String>> handleDishAlreadyExistsException(DishAlreadyExistsException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Collections.singletonMap(MESSAGE, ExceptionResponse.BAD_REQUEST_MESSAGE.getMessage()));
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(Collections.singletonMap(MESSAGE, ExceptionResponse.DISH_ALREADY_EXISTS.getMessage()));
     }
 
     @ExceptionHandler(CategoryNotFoundException.class)
     public ResponseEntity<Map<String, String>> handleCategoryNotFoundException(CategoryNotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Collections.singletonMap(MESSAGE, ExceptionResponse.BAD_REQUEST_MESSAGE.getMessage()));
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(Collections.singletonMap(MESSAGE, ExceptionResponse.CATEGORY_NOT_FOUND.getMessage()));
     }
 
     @ExceptionHandler(DishNotRestaurantException.class)
     public ResponseEntity<Map<String, String>> handleDishNotRestaurantException(DishNotRestaurantException ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(Collections.singletonMap(MESSAGE, ExceptionResponse.DISH_NOT_RESTAURANT_MESSAGE.getMessage()));
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(Collections.singletonMap(MESSAGE, ExceptionResponse.DISH_NOT_RESTAURANT.getMessage()));
     }
 
     @ExceptionHandler(OrdenByIdClientExistsException.class)
     public ResponseEntity<Map<String, String>> handleOrdenByIdClientExistsException(OrdenByIdClientExistsException ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(Collections.singletonMap(MESSAGE, ExceptionResponse.ORDER_CLIENT_EXISTS_MESSAGE.getMessage()));
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(Collections.singletonMap(MESSAGE, ExceptionResponse.ORDER_CLIENT_EXISTS.getMessage()));
     }
 }

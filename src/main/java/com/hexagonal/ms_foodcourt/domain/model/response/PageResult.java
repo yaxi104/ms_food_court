@@ -1,4 +1,4 @@
-package com.hexagonal.ms_foodcourt.domain.model;
+package com.hexagonal.ms_foodcourt.domain.model.response;
 
 import java.util.List;
 

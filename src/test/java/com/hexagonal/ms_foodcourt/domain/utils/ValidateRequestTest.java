@@ -13,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ValidateRequestTest {
+
     @Test
     void constructorIsPrivate() throws Exception {
         Constructor<ValidateRequest> constructor = ValidateRequest.class.getDeclaredConstructor();

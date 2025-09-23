@@ -6,7 +6,7 @@ import com.hexagonal.ms_foodcourt.domain.exception.UserForbiddenException;
 import com.hexagonal.ms_foodcourt.domain.model.Category;
 import com.hexagonal.ms_foodcourt.domain.model.Dish;
 import com.hexagonal.ms_foodcourt.domain.model.PageInfo;
-import com.hexagonal.ms_foodcourt.domain.model.PageResult;
+import com.hexagonal.ms_foodcourt.domain.model.response.PageResult;
 import com.hexagonal.ms_foodcourt.domain.model.User;
 import com.hexagonal.ms_foodcourt.domain.spi.ICategoryPersistencePort;
 import com.hexagonal.ms_foodcourt.domain.spi.IDishPersistencePort;

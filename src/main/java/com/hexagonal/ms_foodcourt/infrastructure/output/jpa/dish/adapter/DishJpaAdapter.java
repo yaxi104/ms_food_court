@@ -2,7 +2,7 @@ package com.hexagonal.ms_foodcourt.infrastructure.output.jpa.dish.adapter;
 
 import com.hexagonal.ms_foodcourt.domain.model.Dish;
 import com.hexagonal.ms_foodcourt.domain.model.PageInfo;
-import com.hexagonal.ms_foodcourt.domain.model.PageResult;
+import com.hexagonal.ms_foodcourt.domain.model.response.PageResult;
 import com.hexagonal.ms_foodcourt.domain.spi.IDishPersistencePort;
 import com.hexagonal.ms_foodcourt.infrastructure.output.jpa.dish.entity.DishEntity;
 import com.hexagonal.ms_foodcourt.infrastructure.output.jpa.dish.mapper.IDishEntityMapper;

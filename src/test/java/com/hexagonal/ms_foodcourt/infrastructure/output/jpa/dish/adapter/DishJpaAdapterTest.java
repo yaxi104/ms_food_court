@@ -2,7 +2,7 @@ package com.hexagonal.ms_foodcourt.infrastructure.output.jpa.dish.adapter;
 
 import com.hexagonal.ms_foodcourt.domain.model.Dish;
 import com.hexagonal.ms_foodcourt.domain.model.PageInfo;
-import com.hexagonal.ms_foodcourt.domain.model.PageResult;
+import com.hexagonal.ms_foodcourt.domain.model.response.PageResult;
 import com.hexagonal.ms_foodcourt.infrastructure.output.jpa.dish.entity.DishEntity;
 import com.hexagonal.ms_foodcourt.infrastructure.output.jpa.dish.mapper.IDishEntityMapper;
 import com.hexagonal.ms_foodcourt.infrastructure.output.jpa.dish.repository.IDishRepository;
@@ -185,4 +185,18 @@ class DishJpaAdapterTest {
 
         verify(dishRepository).findByRestaurantId(restaurantId, expectedPageable);
     }
+
+    @Test
+    void countValidDishesByRestaurantTest() {
+        List<Long> dishIds = List.of(1L, 2L, 3L);
+        Long expectedCount = 3L;
+
+        when(dishRepository.countValidDishesByRestaurant(dishIds, restaurantId)).thenReturn(expectedCount);
+
+        Long result = dishJpaAdapter.countValidDishesByRestaurant(dishIds, restaurantId);
+
+        assertEquals(expectedCount, result);
+        verify(dishRepository).countValidDishesByRestaurant(dishIds, restaurantId);
+    }
+
 }

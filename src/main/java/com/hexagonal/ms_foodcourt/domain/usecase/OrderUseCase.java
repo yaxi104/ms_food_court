@@ -1,16 +1,22 @@
 package com.hexagonal.ms_foodcourt.domain.usecase;
 
 import com.hexagonal.ms_foodcourt.domain.api.IOrderServicePort;
+import com.hexagonal.ms_foodcourt.domain.exception.BadRequestException;
 import com.hexagonal.ms_foodcourt.domain.exception.DishNotRestaurantException;
 import com.hexagonal.ms_foodcourt.domain.exception.OrdenByIdClientExistsException;
+import com.hexagonal.ms_foodcourt.domain.exception.UserNotExistsException;
 import com.hexagonal.ms_foodcourt.domain.model.Order;
 import com.hexagonal.ms_foodcourt.domain.model.OrderDish;
 import com.hexagonal.ms_foodcourt.domain.model.OrderReq;
+import com.hexagonal.ms_foodcourt.domain.model.User;
 import com.hexagonal.ms_foodcourt.domain.spi.IDishPersistencePort;
 import com.hexagonal.ms_foodcourt.domain.spi.IOrderDishPersistencePort;
 import com.hexagonal.ms_foodcourt.domain.spi.IOrderPersistencePort;
+import com.hexagonal.ms_foodcourt.domain.spi.IUserFeignPort;
+import com.hexagonal.ms_foodcourt.domain.spi.IUserSessionPort;
+import com.hexagonal.ms_foodcourt.domain.utils.DateHelper;
+import com.hexagonal.ms_foodcourt.domain.utils.ValidateRequest;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.hexagonal.ms_foodcourt.domain.utils.Constants.EN_PREPARACION;
@@ -22,23 +28,35 @@ public class OrderUseCase implements IOrderServicePort {
     private final IDishPersistencePort dishPersistencePort;
     private final IOrderPersistencePort orderPersistencePort;
     private final IOrderDishPersistencePort orderDishPersistencePort;
+    private final IUserFeignPort userFeignPort;
+    private final IUserSessionPort userSessionPort;
 
     public OrderUseCase(IDishPersistencePort dishPersistencePort,
                         IOrderPersistencePort orderPersistencePort,
-                        IOrderDishPersistencePort orderDishPersistencePort) {
+                        IOrderDishPersistencePort orderDishPersistencePort,
+                        IUserFeignPort userFeignPort,
+                        IUserSessionPort userSessionPort) {
         this.dishPersistencePort = dishPersistencePort;
         this.orderPersistencePort = orderPersistencePort;
         this.orderDishPersistencePort = orderDishPersistencePort;
+        this.userFeignPort = userFeignPort;
+        this.userSessionPort = userSessionPort;
     }
 
 
     @Override
     public void saveOrder(OrderReq orderReq) {
-        if (orderPersistencePort.existsByIdClientAndStatusList(orderReq.getIdClient(), List.of(EN_PREPARACION, PENDIENTE, LISTO))) {
-            throw new OrdenByIdClientExistsException();
+        ValidateRequest.checkId(orderReq.getIdRestaurant());
+        List<OrderDish> orderDishList = orderReq.getOrderDishList();
+        if (orderDishList == null || orderDishList.isEmpty()) {
+            throw new BadRequestException();
         }
 
-        List<OrderDish> orderDishList = orderReq.getOrderDishList();
+        User userClient = userFeignPort.getUserByEmail(userSessionPort.getCurrentUserEmail()).orElseThrow(UserNotExistsException::new);
+        Long idClient = userClient.getId();
+        if (orderPersistencePort.existsByIdClientAndStatusList(idClient, List.of(EN_PREPARACION, PENDIENTE, LISTO))) {
+            throw new OrdenByIdClientExistsException();
+        }
 
         List<Long> dishIds = orderDishList.stream()
                 .map(OrderDish::getIdDish)
@@ -51,8 +69,8 @@ public class OrderUseCase implements IOrderServicePort {
         }
 
         Order order = new Order();
-        order.setIdClient(orderReq.getIdClient());
-        order.setDate(LocalDateTime.now());
+        order.setIdClient(idClient);
+        order.setDate(DateHelper.dateBogota());
         order.setStatus(PENDIENTE);
         order.setIdRestaurant(orderReq.getIdRestaurant());
 

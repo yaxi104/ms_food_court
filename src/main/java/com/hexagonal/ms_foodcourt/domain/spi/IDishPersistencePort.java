@@ -2,7 +2,7 @@ package com.hexagonal.ms_foodcourt.domain.spi;
 
 import com.hexagonal.ms_foodcourt.domain.model.Dish;
 import com.hexagonal.ms_foodcourt.domain.model.PageInfo;
-import com.hexagonal.ms_foodcourt.domain.model.PageResult;
+import com.hexagonal.ms_foodcourt.domain.model.response.PageResult;
 
 import java.util.List;
 import java.util.Optional;

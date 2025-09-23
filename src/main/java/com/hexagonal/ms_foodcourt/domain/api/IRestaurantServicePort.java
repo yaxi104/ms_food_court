@@ -1,8 +1,8 @@
 package com.hexagonal.ms_foodcourt.domain.api;
 
-import com.hexagonal.ms_foodcourt.domain.model.PageResult;
+import com.hexagonal.ms_foodcourt.domain.model.response.PageResult;
 import com.hexagonal.ms_foodcourt.domain.model.Restaurant;
-import com.hexagonal.ms_foodcourt.domain.model.RestaurantResult;
+import com.hexagonal.ms_foodcourt.domain.model.response.RestaurantResult;
 
 public interface IRestaurantServicePort {
 

@@ -1,4 +1,4 @@
-package com.hexagonal.ms_foodcourt.domain.model;
+package com.hexagonal.ms_foodcourt.domain.model.response;
 
 public class RestaurantResult {
 
