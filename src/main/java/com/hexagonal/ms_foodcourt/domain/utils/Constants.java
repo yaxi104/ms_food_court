@@ -28,4 +28,10 @@ public class Constants {
     public static final String LISTO = "LISTO";
     public static final String ENTREGADO = "ENTREGADO";
     public static final String CANCELADO = "CANCELADO";
+
+    /*  PAGE CONFIG*/
+    public static final Integer DEFAULT_PAGE = 0;
+    public static final Integer DEFAULT_SIZE = 10;
+    public static final Integer MAX_SIZE = 100;
+
 }

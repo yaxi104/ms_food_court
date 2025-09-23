@@ -1,5 +1,7 @@
 package com.hexagonal.ms_foodcourt.infrastructure.output.jpa.restaurant.adapter;
 
+import com.hexagonal.ms_foodcourt.domain.model.PageInfo;
+import com.hexagonal.ms_foodcourt.domain.model.PageResult;
 import com.hexagonal.ms_foodcourt.domain.model.Restaurant;
 import com.hexagonal.ms_foodcourt.domain.model.RestaurantResult;
 import com.hexagonal.ms_foodcourt.infrastructure.output.jpa.restaurant.entity.RestaurantEntity;
@@ -22,9 +24,11 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -111,34 +115,50 @@ class RestaurantJpaAdapterTest {
 
     @Test
     void getListRestaurantTest() {
-        Pageable pageable = PageRequest.of(0, 2, Sort.by("name").ascending());
+        PageInfo pageInfo = new PageInfo();
+        pageInfo.setPage(0);
+        pageInfo.setSize(2);
+        pageInfo.setSortBy("name");
 
         RestaurantEntity entity1 = new RestaurantEntity();
-        entity1.setName("A");
+        entity1.setId(1L);
+        entity1.setName("Restaurant A");
 
         RestaurantEntity entity2 = new RestaurantEntity();
-        entity2.setName("B");
+        entity2.setId(2L);
+        entity2.setName("Restaurant B");
 
-        Page<RestaurantEntity> entityPage = new PageImpl<>(List.of(entity1, entity2));
+        List<RestaurantEntity> entities = List.of(entity1, entity2);
+        Pageable pageable = PageRequest.of(pageInfo.getPage(), pageInfo.getSize(), Sort.by(pageInfo.getSortBy()));
 
-        RestaurantResult result1 = new RestaurantResult();
-        result1.setName("A");
-
-        RestaurantResult result2 = new RestaurantResult();
-        result2.setName("B");
+        Page<RestaurantEntity> entityPage = new PageImpl<>(entities, pageable, 5);
 
         when(restaurantRepository.findAllByOrderByNameAsc(pageable)).thenReturn(entityPage);
+
+        RestaurantResult result1 = new RestaurantResult();
+        result1.setId(1L);
+        result1.setName("Restaurant A");
+
+        RestaurantResult result2 = new RestaurantResult();
+        result2.setId(2L);
+        result2.setName("Restaurant B");
+
         when(restaurantEntityMapper.toResturantResult(entity1)).thenReturn(result1);
         when(restaurantEntityMapper.toResturantResult(entity2)).thenReturn(result2);
 
-        Page<RestaurantResult> resultPage = restaurantJpaAdapter.getListRestaurant(pageable);
+        PageResult<RestaurantResult> pageResult = restaurantJpaAdapter.getListRestaurant(pageInfo);
 
-        assertEquals(2, resultPage.getContent().size());
-        assertEquals("A", resultPage.getContent().get(0).getName());
-        assertEquals("B", resultPage.getContent().get(1).getName());
+        assertNotNull(pageResult);
+        assertEquals(2, pageResult.getContent().size());
+        assertEquals(5, pageResult.getTotalElements());
+        assertEquals(3, pageResult.getTotalPages());
+        assertFalse(pageResult.isLast());
+
+        assertEquals("Restaurant A", pageResult.getContent().get(0).getName());
+        assertEquals("Restaurant B", pageResult.getContent().get(1).getName());
 
         verify(restaurantRepository).findAllByOrderByNameAsc(pageable);
-        verify(restaurantEntityMapper).toResturantResult(entity1);
-        verify(restaurantEntityMapper).toResturantResult(entity2);
+        verify(restaurantEntityMapper, times(1)).toResturantResult(entity1);
+        verify(restaurantEntityMapper, times(1)).toResturantResult(entity2);
     }
 }

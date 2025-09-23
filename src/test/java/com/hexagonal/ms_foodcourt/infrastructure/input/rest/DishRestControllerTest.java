@@ -6,6 +6,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.hexagonal.ms_foodcourt.application.dto.request.DishRequest;
 import com.hexagonal.ms_foodcourt.application.dto.request.DishToggleStatusRequest;
 import com.hexagonal.ms_foodcourt.application.dto.request.DishUpdateRequest;
+import com.hexagonal.ms_foodcourt.application.dto.request.PaginatedResponse;
 import com.hexagonal.ms_foodcourt.application.dto.response.DishResponse;
 import com.hexagonal.ms_foodcourt.application.handler.IDishHandler;
 import com.hexagonal.ms_foodcourt.infrastructure.exceptionhandler.ControllerAdvisor;
@@ -15,9 +16,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.json.JacksonTester;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,6 +26,7 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
@@ -118,14 +117,23 @@ class DishRestControllerTest {
         d1.setPrice(25000);
         d1.setDescription("Completa");
         d1.setImageUrl("https://img.com/1");
+
         DishResponse d2 = new DishResponse();
         d2.setName("Arepa");
         d2.setPrice(5000);
         d2.setDescription("Con queso");
         d2.setImageUrl("https://img.com/2");
-        Page<DishResponse> pageResult = new PageImpl<>(List.of(d1, d2), PageRequest.of(page, size), 2);
 
-        when(dishHandler.getListRestaurants(restaurantId, categoryId, page, size)).thenReturn(pageResult);
+        List<DishResponse> content = List.of(d1, d2);
+
+        PaginatedResponse<DishResponse> paginatedResponse = new PaginatedResponse<>(
+                content,
+                1,
+                2L,
+                true
+        );
+
+        when(dishHandler.getListDishes(restaurantId, categoryId, page, size)).thenReturn(paginatedResponse);
 
         mockMvc.perform(get("/api/v1/dish/all/{restaurantId}", restaurantId)
                         .param("categoryId", categoryId.toString())
@@ -133,7 +141,8 @@ class DishRestControllerTest {
                         .param("size", String.valueOf(size))
                         .with(user("cliente").roles("CLIENTE")))
                 .andExpect(status().isOk());
-        verify(dishHandler).getListRestaurants(restaurantId, categoryId, page, size);
+
+        verify(dishHandler, times(1)).getListDishes(restaurantId, categoryId, page, size);
     }
 
 }

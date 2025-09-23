@@ -13,7 +13,6 @@ public class TestDataCategoryFactory {
         CategoryEntity entity = new CategoryEntity();
         entity.setId(1L);
         entity.setName("Entradas");
-        entity.setDescription("Platos para comenzar");
         return entity;
     }
 }

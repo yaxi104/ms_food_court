@@ -5,6 +5,8 @@ import com.hexagonal.ms_foodcourt.domain.exception.DishAlreadyExistsException;
 import com.hexagonal.ms_foodcourt.domain.exception.UserForbiddenException;
 import com.hexagonal.ms_foodcourt.domain.model.Category;
 import com.hexagonal.ms_foodcourt.domain.model.Dish;
+import com.hexagonal.ms_foodcourt.domain.model.PageInfo;
+import com.hexagonal.ms_foodcourt.domain.model.PageResult;
 import com.hexagonal.ms_foodcourt.domain.model.User;
 import com.hexagonal.ms_foodcourt.domain.spi.ICategoryPersistencePort;
 import com.hexagonal.ms_foodcourt.domain.spi.IDishPersistencePort;
@@ -15,11 +17,6 @@ import com.hexagonal.ms_foodcourt.util.TestDataDishFactory;
 import com.hexagonal.ms_foodcourt.util.TestDataUserFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,6 +24,9 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -160,25 +160,27 @@ class DishUseCaseTest {
     void getListDishSuccessTest() {
         Long restaurantId = 1L;
         Long categoryId = 2L;
-        int page = 0;
-        int size = 5;
-        Pageable pageable = PageRequest.of(page, size, Sort.by("price").ascending());
+        Integer page = 1;
+        Integer size = 5;
 
-        Dish dish1 = new Dish(1L, "Hamburguesa", 15000, "Con papas", "https://img.com/1", categoryId, restaurantId, "true");
-        Dish dish2 = new Dish(2L, "Pizza", 20000, "Personal", "https://img.com/2", categoryId, restaurantId, "true");
+        Dish dummyDish = new Dish.Builder().id(1L).name("Test").price(10000).build();
 
-        List<Dish> dishList = List.of(dish1, dish2);
-        Page<Dish> dishPage = new PageImpl<>(dishList, pageable, dishList.size());
+        PageResult<Dish> expectedPageResult = new PageResult<>(
+                List.of(dummyDish),
+                1,
+                1L,
+                true
+        );
 
-        when(dishPersistencePort.listDishes(restaurantId, categoryId, pageable)).thenReturn(dishPage);
+        when(dishPersistencePort.listDishes(eq(restaurantId), eq(categoryId), any(PageInfo.class)))
+                .thenReturn(expectedPageResult);
 
-        Page<Dish> result = dishUseCase.getListDish(restaurantId, categoryId, page, size);
+        PageResult<Dish> result = dishUseCase.getListDish(restaurantId, categoryId, page, size);
 
         assertNotNull(result);
-        assertEquals(2, result.getContent().size());
-        assertEquals("Hamburguesa", result.getContent().get(0).getName());
-        assertEquals("Pizza", result.getContent().get(1).getName());
-
-        verify(dishPersistencePort).listDishes(restaurantId, categoryId, pageable);
+        assertEquals(1, result.getContent().size());
+        assertEquals("Test", result.getContent().get(0).getName());
+        assertTrue(result.isLast());
+        verify(dishPersistencePort).listDishes(eq(restaurantId), eq(categoryId), any(PageInfo.class));
     }
 }

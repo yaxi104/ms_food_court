@@ -7,6 +7,8 @@ import com.hexagonal.ms_foodcourt.domain.exception.DishNotFoundException;
 import com.hexagonal.ms_foodcourt.domain.exception.UserForbiddenException;
 import com.hexagonal.ms_foodcourt.domain.exception.UserNotExistsException;
 import com.hexagonal.ms_foodcourt.domain.model.Dish;
+import com.hexagonal.ms_foodcourt.domain.model.PageInfo;
+import com.hexagonal.ms_foodcourt.domain.model.PageResult;
 import com.hexagonal.ms_foodcourt.domain.model.User;
 import com.hexagonal.ms_foodcourt.domain.spi.ICategoryPersistencePort;
 import com.hexagonal.ms_foodcourt.domain.spi.IDishPersistencePort;
@@ -15,8 +17,6 @@ import com.hexagonal.ms_foodcourt.domain.spi.IUserFeignPort;
 import com.hexagonal.ms_foodcourt.domain.spi.IUserSessionPort;
 import com.hexagonal.ms_foodcourt.domain.utils.PageableHelper;
 import com.hexagonal.ms_foodcourt.domain.utils.ValidateRequest;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 import static com.hexagonal.ms_foodcourt.domain.utils.Constants.TRUE_STATUS;
 
@@ -91,9 +91,9 @@ public class DishUseCase implements IDishServicePort {
     }
 
     @Override
-    public Page<Dish> getListDish(Long restaurantId, Long categoryId, int page, int size) {
-        Pageable pageable = PageableHelper.getPageable(page, size, "price");
-        return dishPersistencePort.listDishes(restaurantId, categoryId, pageable);
+    public PageResult<Dish> getListDish(Long restaurantId, Long categoryId, Integer page, Integer size) {
+        PageInfo pageInfo = PageableHelper.getPageable(page, size, "price");
+        return dishPersistencePort.listDishes(restaurantId, categoryId, pageInfo);
     }
 
 

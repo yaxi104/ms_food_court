@@ -4,6 +4,7 @@ package com.hexagonal.ms_foodcourt.infrastructure.input.rest;
 import com.hexagonal.ms_foodcourt.application.dto.request.DishRequest;
 import com.hexagonal.ms_foodcourt.application.dto.request.DishToggleStatusRequest;
 import com.hexagonal.ms_foodcourt.application.dto.request.DishUpdateRequest;
+import com.hexagonal.ms_foodcourt.application.dto.request.PaginatedResponse;
 import com.hexagonal.ms_foodcourt.application.dto.response.DishResponse;
 import com.hexagonal.ms_foodcourt.application.handler.IDishHandler;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,7 +15,6 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -317,11 +317,12 @@ public class DishRestController {
     )
     @PreAuthorize("hasAnyRole('CLIENTE')")
     @GetMapping("/all/{restaurantId}")
-    public ResponseEntity<Page<DishResponse>> listRestaurants(@PathVariable Long restaurantId,
-                                                              @RequestParam(required = false) Long categoryId,
-                                                              @RequestParam(value = "page", defaultValue = "0") int page,
-                                                              @RequestParam(value = "size", defaultValue = "10") int size) {
-        Page<DishResponse> dishResponsePage = dishHandler.getListRestaurants(restaurantId, categoryId, page, size);
+    public ResponseEntity<PaginatedResponse<DishResponse>> listRestaurants(@PathVariable Long restaurantId,
+                                                                           @RequestParam(required = false) Long categoryId,
+                                                                           @RequestParam(required = false) Integer page,
+                                                                           @RequestParam(required = false) Integer size) {
+        PaginatedResponse<DishResponse> dishResponsePage = dishHandler.getListDishes
+                (restaurantId, categoryId, page, size);
         return ResponseEntity.ok(dishResponsePage);
     }
 }

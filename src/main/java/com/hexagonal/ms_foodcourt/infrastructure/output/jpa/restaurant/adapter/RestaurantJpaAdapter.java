@@ -1,5 +1,7 @@
 package com.hexagonal.ms_foodcourt.infrastructure.output.jpa.restaurant.adapter;
 
+import com.hexagonal.ms_foodcourt.domain.model.PageInfo;
+import com.hexagonal.ms_foodcourt.domain.model.PageResult;
 import com.hexagonal.ms_foodcourt.domain.model.Restaurant;
 import com.hexagonal.ms_foodcourt.domain.model.RestaurantResult;
 import com.hexagonal.ms_foodcourt.domain.spi.IRestaurantPersistencePort;
@@ -8,8 +10,11 @@ import com.hexagonal.ms_foodcourt.infrastructure.output.jpa.restaurant.mapper.IR
 import com.hexagonal.ms_foodcourt.infrastructure.output.jpa.restaurant.repository.IRestaurantRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -36,8 +41,10 @@ public class RestaurantJpaAdapter implements IRestaurantPersistencePort {
     }
 
     @Override
-    public Page<RestaurantResult> getListRestaurant(Pageable pageable) {
-        Page<RestaurantEntity> entityPage = restaurantRepository.findAllByOrderByNameAsc(pageable);
-        return entityPage.map(restaurantEntityMapper::toResturantResult);
+    public PageResult<RestaurantResult> getListRestaurant(PageInfo pageInfo) {
+        Pageable pageable = PageRequest.of(pageInfo.getPage(), pageInfo.getSize(), Sort.by(pageInfo.getSortBy()));
+        Page<RestaurantEntity> page = restaurantRepository.findAllByOrderByNameAsc(pageable);
+        List<RestaurantResult> content = page.map(restaurantEntityMapper::toResturantResult).toList();
+        return new PageResult<>(content, page.getTotalPages(), page.getTotalElements(), page.isLast());
     }
 }

@@ -6,6 +6,8 @@ import com.hexagonal.ms_foodcourt.application.dto.request.DishUpdateRequest;
 import com.hexagonal.ms_foodcourt.domain.model.Dish;
 import com.hexagonal.ms_foodcourt.infrastructure.output.jpa.dish.entity.DishEntity;
 
+import java.util.List;
+
 
 public class TestDataDishFactory {
 
@@ -61,4 +63,20 @@ public class TestDataDishFactory {
         dish.setRestaurantId(1L);
         return dish;
     }
+
+    public static List<Dish> mockDishes() {
+        return List.of(
+                new Dish.Builder()
+                        .id(1L)
+                        .name("Dish 1")
+                        .price(10000)
+                        .description("Delicious")
+                        .imageUrl("https://img.com/1")
+                        .categoryId(2L)
+                        .restaurantId(1L)
+                        .active("true")
+                        .build()
+        );
+    }
+
 }

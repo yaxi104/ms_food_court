@@ -2,22 +2,20 @@ package com.hexagonal.ms_foodcourt.domain.usecase;
 
 import com.hexagonal.ms_foodcourt.domain.exception.RestaurantAlreadyExistsException;
 import com.hexagonal.ms_foodcourt.domain.exception.UserNotExistsException;
+import com.hexagonal.ms_foodcourt.domain.model.PageInfo;
+import com.hexagonal.ms_foodcourt.domain.model.PageResult;
 import com.hexagonal.ms_foodcourt.domain.model.Restaurant;
 import com.hexagonal.ms_foodcourt.domain.model.RestaurantResult;
 import com.hexagonal.ms_foodcourt.domain.model.UserAuth;
 import com.hexagonal.ms_foodcourt.domain.spi.IRestaurantPersistencePort;
 import com.hexagonal.ms_foodcourt.domain.spi.IUserFeignPort;
+import com.hexagonal.ms_foodcourt.domain.utils.PageableHelper;
 import com.hexagonal.ms_foodcourt.util.TestDataRestaurantFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,6 +24,8 @@ import static com.hexagonal.ms_foodcourt.domain.utils.Constants.ROLE_ADMIN;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -95,27 +95,37 @@ class RestaurantUseCaseTest {
 
     @Test
     void getListRestaurantPagedResults() {
-        int page = 0;
-        int size = 2;
-        Pageable pageable = PageRequest.of(page, size, Sort.by("name").ascending());
+        Integer page = 0;
+        Integer size = 10;
 
-        RestaurantResult restaurant1 = new RestaurantResult();
-        restaurant1.setName("Sushi Place");
+        PageInfo expectedPageInfo = PageableHelper.getPageable(page, size, "name");
 
-        RestaurantResult restaurant2 = new RestaurantResult();
-        restaurant2.setName("Burger Spot");
+        RestaurantResult restaurantResult = new RestaurantResult();
+        restaurantResult.setId(1L);
+        restaurantResult.setName("Restaurante 1");
 
-        Page<RestaurantResult> expectedPage = new PageImpl<>(List.of(restaurant1, restaurant2), pageable, 2);
+        PageResult<RestaurantResult> expectedPageResult = new PageResult<>(
+                List.of(restaurantResult),
+                1,
+                1L,
+                true
+        );
 
-        when(restaurantPersistencePort.getListRestaurant(pageable)).thenReturn(expectedPage);
+        when(restaurantPersistencePort.getListRestaurant(any(PageInfo.class))).thenReturn(expectedPageResult);
 
-        Page<RestaurantResult> actualPage = restaurantUseCase.getListRestaurant(page, size);
+        PageResult<RestaurantResult> actualPageResult = restaurantUseCase.getListRestaurant(page, size);
 
-        assertNotNull(actualPage);
-        assertEquals(2, actualPage.getContent().size());
-        assertEquals("Sushi Place", actualPage.getContent().get(0).getName());
-        assertEquals("Burger Spot", actualPage.getContent().get(1).getName());
+        assertNotNull(actualPageResult);
+        assertEquals(expectedPageResult.getContent().size(), actualPageResult.getContent().size());
+        assertEquals(expectedPageResult.getTotalPages(), actualPageResult.getTotalPages());
+        assertEquals(expectedPageResult.getTotalElements(), actualPageResult.getTotalElements());
+        assertEquals(expectedPageResult.isLast(), actualPageResult.isLast());
 
-        verify(restaurantPersistencePort).getListRestaurant(pageable);
+        verify(restaurantPersistencePort).getListRestaurant(argThat(pageInfo ->
+                pageInfo.getPage() == expectedPageInfo.getPage() &&
+                        pageInfo.getSize() == expectedPageInfo.getSize() &&
+                        pageInfo.getSortBy().equals(expectedPageInfo.getSortBy())
+        ));
     }
+
 }

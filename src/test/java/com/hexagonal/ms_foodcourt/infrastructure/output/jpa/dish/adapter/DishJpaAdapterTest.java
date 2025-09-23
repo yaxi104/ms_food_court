@@ -1,6 +1,8 @@
 package com.hexagonal.ms_foodcourt.infrastructure.output.jpa.dish.adapter;
 
 import com.hexagonal.ms_foodcourt.domain.model.Dish;
+import com.hexagonal.ms_foodcourt.domain.model.PageInfo;
+import com.hexagonal.ms_foodcourt.domain.model.PageResult;
 import com.hexagonal.ms_foodcourt.infrastructure.output.jpa.dish.entity.DishEntity;
 import com.hexagonal.ms_foodcourt.infrastructure.output.jpa.dish.mapper.IDishEntityMapper;
 import com.hexagonal.ms_foodcourt.infrastructure.output.jpa.dish.repository.IDishRepository;
@@ -20,6 +22,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
@@ -37,8 +41,6 @@ class DishJpaAdapterTest {
 
     private DishJpaAdapter dishJpaAdapter;
     private final Long restaurantId = 1L;
-    private final Long categoryId = 2L;
-    private final Pageable pageable = PageRequest.of(0, 10, Sort.by("price").ascending());
 
     @BeforeEach
     void setUp() {
@@ -120,33 +122,67 @@ class DishJpaAdapterTest {
 
     @Test
     void shouldListDishesFilteredByCategory() {
-        DishEntity entity = new DishEntity();
-        Dish domainDish = new Dish();
+        PageInfo pageInfo = new PageInfo();
+        pageInfo.setPage(0);
+        pageInfo.setSize(2);
+        pageInfo.setSortBy("price");
 
-        Page<DishEntity> entityPage = new PageImpl<>(List.of(entity));
-        when(dishRepository.findByRestaurantIdAndCategoryId(restaurantId, categoryId, pageable)).thenReturn(entityPage);
-        when(dishEntityMapper.toDish(entity)).thenReturn(domainDish);
+        Pageable expectedPageable = PageRequest.of(0, 2, Sort.by("price"));
 
-        Page<Dish> result = dishJpaAdapter.listDishes(restaurantId, categoryId, pageable);
+        DishEntity dishEntity1 = new DishEntity();
+        dishEntity1.setId(1L);
+        dishEntity1.setName("Dish 1");
 
-        assertEquals(1, result.getTotalElements());
-        assertEquals(domainDish, result.getContent().get(0));
-        verify(dishRepository).findByRestaurantIdAndCategoryId(restaurantId, categoryId, pageable);
+        DishEntity dishEntity2 = new DishEntity();
+        dishEntity2.setId(2L);
+        dishEntity2.setName("Dish 2");
+
+        List<DishEntity> entities = List.of(dishEntity1, dishEntity2);
+        Page<DishEntity> page = new PageImpl<>(entities, expectedPageable, 5);
+
+        Long categoryId = 2L;
+        when(dishRepository.findByRestaurantIdAndCategoryId(restaurantId, categoryId, expectedPageable)).thenReturn(page);
+        when(dishEntityMapper.toDish(dishEntity1)).thenReturn(new Dish.Builder().id(1L).name("Dish 1").build());
+        when(dishEntityMapper.toDish(dishEntity2)).thenReturn(new Dish.Builder().id(2L).name("Dish 2").build());
+
+        PageResult<Dish> pageResult = dishJpaAdapter.listDishes(restaurantId, categoryId, pageInfo);
+
+        assertNotNull(pageResult);
+        assertEquals(2, pageResult.getContent().size());
+        assertEquals(5, pageResult.getTotalElements());
+        assertEquals(3, pageResult.getTotalPages());
+        assertFalse(pageResult.isLast());
+
+        verify(dishRepository).findByRestaurantIdAndCategoryId(restaurantId, categoryId, expectedPageable);
     }
 
     @Test
-    void shouldListDishesWithoutCategoryFilter() {
-        DishEntity entity = new DishEntity();
-        Dish domainDish = new Dish();
+    void shouldListDishesTest() {
+        PageInfo pageInfo = new PageInfo();
+        pageInfo.setPage(0);
+        pageInfo.setSize(2);
+        pageInfo.setSortBy("price");
 
-        Page<DishEntity> entityPage = new PageImpl<>(List.of(entity));
-        when(dishRepository.findByRestaurantId(restaurantId, pageable)).thenReturn(entityPage);
-        when(dishEntityMapper.toDish(entity)).thenReturn(domainDish);
+        Pageable expectedPageable = PageRequest.of(0, 2, Sort.by("price"));
 
-        Page<Dish> result = dishJpaAdapter.listDishes(restaurantId, null, pageable);
+        DishEntity dishEntity = new DishEntity();
+        dishEntity.setId(1L);
+        dishEntity.setName("Dish 1");
 
-        assertEquals(1, result.getTotalElements());
-        assertEquals(domainDish, result.getContent().get(0));
-        verify(dishRepository).findByRestaurantId(restaurantId, pageable);
+        List<DishEntity> entities = List.of(dishEntity);
+        Page<DishEntity> page = new PageImpl<>(entities, expectedPageable, 1);
+
+        when(dishRepository.findByRestaurantId(restaurantId, expectedPageable)).thenReturn(page);
+        when(dishEntityMapper.toDish(dishEntity)).thenReturn(new Dish.Builder().id(1L).name("Dish 1").build());
+
+        PageResult<Dish> pageResult = dishJpaAdapter.listDishes(restaurantId, null, pageInfo);
+
+        assertNotNull(pageResult);
+        assertEquals(1, pageResult.getContent().size());
+        assertEquals(1, pageResult.getTotalElements());
+        assertEquals(1, pageResult.getTotalPages());
+        assertTrue(pageResult.isLast());
+
+        verify(dishRepository).findByRestaurantId(restaurantId, expectedPageable);
     }
 }

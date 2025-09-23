@@ -1,5 +1,6 @@
 package com.hexagonal.ms_foodcourt.infrastructure.input.rest;
 
+import com.hexagonal.ms_foodcourt.application.dto.request.PaginatedResponse;
 import com.hexagonal.ms_foodcourt.application.dto.request.RestaurantRequest;
 import com.hexagonal.ms_foodcourt.application.dto.response.RestaurantResponse;
 import com.hexagonal.ms_foodcourt.application.handler.IRestaurantHandler;
@@ -10,7 +11,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -197,9 +197,9 @@ public class RestaurantRestController {
     )
     @PreAuthorize("hasAnyRole('CLIENTE')")
     @GetMapping("/all")
-    public ResponseEntity<Page<RestaurantResponse>> listRestaurants(@RequestParam(value = "page", defaultValue = "0") int page,
-                                                                    @RequestParam(value = "size", defaultValue = "10") int size) {
-        Page<RestaurantResponse> listRestaurants = restaurantHandler.getListRestaurants(page, size);
+    public ResponseEntity<PaginatedResponse<RestaurantResponse>> listRestaurants(@RequestParam(required = false) Integer page,
+                                                                                 @RequestParam(required = false) Integer size) {
+        PaginatedResponse<RestaurantResponse> listRestaurants = restaurantHandler.getListRestaurants(page, size);
         return ResponseEntity.ok(listRestaurants);
     }
 }

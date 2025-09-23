@@ -1,7 +1,7 @@
 package com.hexagonal.ms_foodcourt.domain.api;
 
 import com.hexagonal.ms_foodcourt.domain.model.Dish;
-import org.springframework.data.domain.Page;
+import com.hexagonal.ms_foodcourt.domain.model.PageResult;
 
 public interface IDishServicePort {
 
@@ -11,5 +11,5 @@ public interface IDishServicePort {
 
     void toggleStatusDish(Dish dish);
 
-    Page<Dish> getListDish(Long restaurantId, Long categoryId, int page, int size);
+    PageResult<Dish> getListDish(Long restaurantId, Long categoryId, Integer page, Integer size);
 }

@@ -3,6 +3,7 @@ package com.hexagonal.ms_foodcourt.infrastructure.input.rest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.hexagonal.ms_foodcourt.application.dto.request.PaginatedResponse;
 import com.hexagonal.ms_foodcourt.application.dto.request.RestaurantRequest;
 import com.hexagonal.ms_foodcourt.application.dto.response.RestaurantResponse;
 import com.hexagonal.ms_foodcourt.application.handler.IRestaurantHandler;
@@ -12,9 +13,6 @@ import com.hexagonal.ms_foodcourt.util.TestDataRestaurantFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.json.JacksonTester;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -96,9 +94,15 @@ class RestaurantRestControllerTest {
         r2.setUrlLogo("https://example.com/logo2");
 
         List<RestaurantResponse> responses = List.of(r1, r2);
-        Page<RestaurantResponse> page = new PageImpl<>(responses, PageRequest.of(0, 10), responses.size());
 
-        when(restaurantHandler.getListRestaurants(0, 10)).thenReturn(page);
+        PaginatedResponse<RestaurantResponse> paginatedResponse = new PaginatedResponse<>(
+                responses,
+                1,
+                2L,
+                true
+        );
+
+        when(restaurantHandler.getListRestaurants(0, 10)).thenReturn(paginatedResponse);
 
         var auth = new TestingAuthenticationToken("cliente", "password", "ROLE_CLIENTE");
         SecurityContextHolder.getContext().setAuthentication(auth);
@@ -108,7 +112,6 @@ class RestaurantRestControllerTest {
                         .param("size", "10")
                         .with(authentication(auth)))
                 .andExpect(status().isOk());
-
         verify(restaurantHandler).getListRestaurants(0, 10);
 
         SecurityContextHolder.clearContext();

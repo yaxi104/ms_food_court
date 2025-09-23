@@ -1,15 +1,18 @@
 package com.hexagonal.ms_foodcourt.application.handler.impl;
 
+import com.hexagonal.ms_foodcourt.application.dto.request.PaginatedResponse;
 import com.hexagonal.ms_foodcourt.application.dto.request.RestaurantRequest;
 import com.hexagonal.ms_foodcourt.application.dto.response.RestaurantResponse;
 import com.hexagonal.ms_foodcourt.application.handler.IRestaurantHandler;
 import com.hexagonal.ms_foodcourt.application.mapper.IRestaurantRequestMapper;
 import com.hexagonal.ms_foodcourt.domain.api.IRestaurantServicePort;
+import com.hexagonal.ms_foodcourt.domain.model.PageResult;
 import com.hexagonal.ms_foodcourt.domain.model.RestaurantResult;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -25,9 +28,19 @@ public class RestaurantHandler implements IRestaurantHandler {
     }
 
     @Override
-    public Page<RestaurantResponse> getListRestaurants(int page, int size) {
-        Page<RestaurantResult> resultPage = restaurantServicePort.getListRestaurant(page, size);
-        return resultPage.map(restaurantRequestMapper::toRestaurantResponse);
+    public PaginatedResponse<RestaurantResponse> getListRestaurants(Integer page, Integer size) {
+        PageResult<RestaurantResult> resultPage = restaurantServicePort.getListRestaurant(page, size);
+
+        List<RestaurantResponse> responseList = resultPage.getContent().stream()
+                .map(restaurantRequestMapper::toRestaurantResponse)
+                .toList();
+
+        return new PaginatedResponse<>(
+                responseList,
+                resultPage.getTotalPages(),
+                resultPage.getTotalElements(),
+                resultPage.isLast()
+        );
     }
 
 }

@@ -1,13 +1,17 @@
 package com.hexagonal.ms_foodcourt.infrastructure.output.jpa.dish.adapter;
 
 import com.hexagonal.ms_foodcourt.domain.model.Dish;
+import com.hexagonal.ms_foodcourt.domain.model.PageInfo;
+import com.hexagonal.ms_foodcourt.domain.model.PageResult;
 import com.hexagonal.ms_foodcourt.domain.spi.IDishPersistencePort;
 import com.hexagonal.ms_foodcourt.infrastructure.output.jpa.dish.entity.DishEntity;
 import com.hexagonal.ms_foodcourt.infrastructure.output.jpa.dish.mapper.IDishEntityMapper;
 import com.hexagonal.ms_foodcourt.infrastructure.output.jpa.dish.repository.IDishRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 import java.util.Optional;
@@ -35,16 +39,15 @@ public class DishJpaAdapter implements IDishPersistencePort {
     }
 
     @Override
-    public Page<Dish> listDishes(Long restaurantId, Long categoryId, Pageable pageable) {
-        Page<DishEntity> dishEntities;
+    public PageResult<Dish> listDishes(Long restaurantId, Long categoryId, PageInfo pageInfo) {
+        Pageable pageable = PageRequest.of(pageInfo.getPage(), pageInfo.getSize(), Sort.by(pageInfo.getSortBy()));
 
-        if (categoryId != null) {
-            dishEntities = dishRepository.findByRestaurantIdAndCategoryId(restaurantId, categoryId, pageable);
-        } else {
-            dishEntities = dishRepository.findByRestaurantId(restaurantId, pageable);
-        }
+        Page<DishEntity> page = (categoryId != null)
+                ? dishRepository.findByRestaurantIdAndCategoryId(restaurantId, categoryId, pageable)
+                : dishRepository.findByRestaurantId(restaurantId, pageable);
 
-        return dishEntities.map(dishEntityMapper::toDish);
+        List<Dish> content = page.map(dishEntityMapper::toDish).toList();
+        return new PageResult<>(content, page.getTotalPages(), page.getTotalElements(), page.isLast());
     }
 
     @Override
