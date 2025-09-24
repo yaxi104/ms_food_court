@@ -20,6 +20,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -92,4 +93,14 @@ class OrderHandlerTest {
         verify(orderServicePort).getAllOrderByStatus(status, restaurantId, page, size);
         verify(orderRequestMapper).toOrderResponseList(orderResults);
     }
+
+    @Test
+    void assignOrderToEmployeeCallsService() {
+        Long orderId = 123L;
+
+        orderHandler.assignOrderToEmployee(orderId);
+
+        verify(orderServicePort, times(1)).assignOrderToEmployee(orderId);
+    }
+
 }

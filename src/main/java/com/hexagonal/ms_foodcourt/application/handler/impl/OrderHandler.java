@@ -40,4 +40,9 @@ public class OrderHandler implements IOrderHandler {
                 resultPage.isLast()
         );
     }
+
+    @Override
+    public void assignOrderToEmployee(Long orderId) {
+        orderServicePort.assignOrderToEmployee(orderId);
+    }
 }

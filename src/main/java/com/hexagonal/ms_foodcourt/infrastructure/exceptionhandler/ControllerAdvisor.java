@@ -6,6 +6,8 @@ import com.hexagonal.ms_foodcourt.domain.exception.DishAlreadyExistsException;
 import com.hexagonal.ms_foodcourt.domain.exception.DishNotFoundException;
 import com.hexagonal.ms_foodcourt.domain.exception.DishNotRestaurantException;
 import com.hexagonal.ms_foodcourt.domain.exception.OrdenByIdClientExistsException;
+import com.hexagonal.ms_foodcourt.domain.exception.OrderNotFoundException;
+import com.hexagonal.ms_foodcourt.domain.exception.OrderStatusNotAssignedException;
 import com.hexagonal.ms_foodcourt.domain.exception.RestaurantAlreadyExistsException;
 import com.hexagonal.ms_foodcourt.domain.exception.UserForbiddenException;
 import com.hexagonal.ms_foodcourt.domain.exception.UserNotExistsException;
@@ -82,4 +84,16 @@ public class ControllerAdvisor {
     public ResponseEntity<Map<String, String>> handleOrdenByIdClientExistsException(OrdenByIdClientExistsException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(Collections.singletonMap(MESSAGE, ExceptionResponse.ORDER_CLIENT_EXISTS.getMessage()));
     }
+
+    @ExceptionHandler(OrderNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleOrderNotFoundException(OrderNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(Collections.singletonMap(MESSAGE, ExceptionResponse.ORDER_NOT_FOUND.getMessage()));
+    }
+
+    @ExceptionHandler(OrderStatusNotAssignedException.class)
+    public ResponseEntity<Map<String, String>> handleOrderStatusNotAssignedException(OrderStatusNotAssignedException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(Collections.singletonMap(MESSAGE, ExceptionResponse.ORDER_NOT_STATUS_ASSIGNED.getMessage()));
+    }
+
+
 }

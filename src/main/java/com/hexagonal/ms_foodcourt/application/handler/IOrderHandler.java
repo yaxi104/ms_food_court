@@ -10,4 +10,6 @@ public interface IOrderHandler {
     void saveOrder(OrderRequest orderRequest);
 
     PaginatedResponse<OrderResponse> getAllOrderByStatus(String status, Long idRestaurant, Integer page, Integer size);
+
+    void assignOrderToEmployee(Long orderId);
 }

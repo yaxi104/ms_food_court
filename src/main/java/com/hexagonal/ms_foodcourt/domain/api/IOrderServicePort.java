@@ -9,4 +9,6 @@ public interface IOrderServicePort {
     void saveOrder(OrderReq orderReq);
 
     PageResult<OrderResult> getAllOrderByStatus(String status, Long idRestaurant, Integer page, Integer size);
+
+    void assignOrderToEmployee(Long orderId);
 }

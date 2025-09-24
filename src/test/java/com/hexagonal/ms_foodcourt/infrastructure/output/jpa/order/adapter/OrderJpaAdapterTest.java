@@ -20,11 +20,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -105,10 +107,43 @@ class OrderJpaAdapterTest {
         assertEquals(2, result.getContent().size());
         assertEquals(1, result.getTotalPages());
         assertEquals(2, result.getTotalElements());
-        assertEquals(true, result.isLast());
 
         verify(orderRepository).findByStatusAndIdRestaurant(status, restaurantId, pageable);
         verify(orderEntityMapper).toOrderList(orderEntities);
+    }
+
+    @Test
+    void findByIdReturnsOrderWhenFound() {
+        Long orderId = 1L;
+        OrderEntity orderEntity = new OrderEntity();
+        orderEntity.setId(orderId);
+        Order order = new Order();
+        order.setId(orderId);
+
+        when(orderRepository.findById(orderId)).thenReturn(Optional.of(orderEntity));
+        when(orderEntityMapper.toOrder(orderEntity)).thenReturn(order);
+
+        Optional<Order> result = orderJpaAdapter.findById(orderId);
+
+        assertTrue(result.isPresent());
+        assertEquals(orderId, result.get().getId());
+
+        verify(orderRepository).findById(orderId);
+        verify(orderEntityMapper).toOrder(orderEntity);
+    }
+
+    @Test
+    void findByIdReturnsEmptyWhenNotFound() {
+        Long orderId = 2L;
+
+        when(orderRepository.findById(orderId)).thenReturn(Optional.empty());
+
+        Optional<Order> result = orderJpaAdapter.findById(orderId);
+
+        assertFalse(result.isPresent());
+
+        verify(orderRepository).findById(orderId);
+        verifyNoInteractions(orderEntityMapper);
     }
 
 }

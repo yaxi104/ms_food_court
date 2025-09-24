@@ -6,6 +6,7 @@ import com.hexagonal.ms_foodcourt.domain.model.response.OrderResult;
 import com.hexagonal.ms_foodcourt.domain.model.response.PageResult;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface IOrderPersistencePort {
 
@@ -15,4 +16,5 @@ public interface IOrderPersistencePort {
 
     PageResult<OrderResult> findByStatusAndIdRestaurant(String status, Long restaurantId, PageInfo pageInfo);
 
+    Optional<Order> findById(Long id);
 }

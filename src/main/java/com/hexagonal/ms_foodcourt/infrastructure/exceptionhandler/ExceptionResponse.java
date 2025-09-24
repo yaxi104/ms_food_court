@@ -10,7 +10,9 @@ public enum ExceptionResponse {
     CATEGORY_NOT_FOUND("The category not found"),
     DISH_NOT_FOUND("The dish not found"),
     DISH_ALREADY_EXISTS("Dish already exists"),
-    USER_NOT_EXISTS("The user does not exist as an owner");
+    USER_NOT_EXISTS("The user does not exist as an owner"),
+    ORDER_NOT_STATUS_ASSIGNED("Order status is not PENDIENTE and cannot be assigned"),
+    ORDER_NOT_FOUND("The dish not found");
 
     private String message;
 

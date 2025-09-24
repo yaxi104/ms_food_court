@@ -29,6 +29,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -110,4 +111,14 @@ class OrderRestControllerTest {
         verify(orderHandler).getAllOrderByStatus(status, idRestaurant, page, size);
     }
 
+    @Test
+    void assignOrderToEmployeeSuccess() throws Exception {
+        Long orderId = 123L;
+
+        mockMvc.perform(patch("/api/v1/order/assign/{orderId}", orderId)
+                        .with(authentication(new TestingAuthenticationToken("empleado", "password", "ROLE_EMPLEADO"))))
+                .andExpect(status().isNoContent());
+
+        verify(orderHandler).assignOrderToEmployee(orderId);
+    }
 }

@@ -6,6 +6,8 @@ import com.hexagonal.ms_foodcourt.domain.exception.DishAlreadyExistsException;
 import com.hexagonal.ms_foodcourt.domain.exception.DishNotFoundException;
 import com.hexagonal.ms_foodcourt.domain.exception.DishNotRestaurantException;
 import com.hexagonal.ms_foodcourt.domain.exception.OrdenByIdClientExistsException;
+import com.hexagonal.ms_foodcourt.domain.exception.OrderNotFoundException;
+import com.hexagonal.ms_foodcourt.domain.exception.OrderStatusNotAssignedException;
 import com.hexagonal.ms_foodcourt.domain.exception.RestaurantAlreadyExistsException;
 import com.hexagonal.ms_foodcourt.domain.exception.UserForbiddenException;
 import com.hexagonal.ms_foodcourt.domain.exception.UserNotExistsException;
@@ -147,5 +149,27 @@ class ControllerAdvisorTest {
         assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
         assertNotNull(response.getBody());
         assertEquals(ExceptionResponse.ORDER_CLIENT_EXISTS.getMessage(), response.getBody().get(MESSAGE));
+    }
+
+    @Test
+    void handleOrderNotFoundExceptionExceptionReturnsConflict() {
+        OrderNotFoundException ex = mock(OrderNotFoundException.class);
+
+        ResponseEntity<Map<String, String>> response = controllerAdvisor.handleOrderNotFoundException(ex);
+
+        assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(ExceptionResponse.ORDER_NOT_FOUND.getMessage(), response.getBody().get(MESSAGE));
+    }
+
+    @Test
+    void handleOrderStatusNotAssignedExceptionExceptionReturnsConflict() {
+        OrderStatusNotAssignedException ex = mock(OrderStatusNotAssignedException.class);
+
+        ResponseEntity<Map<String, String>> response = controllerAdvisor.handleOrderStatusNotAssignedException(ex);
+
+        assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(ExceptionResponse.ORDER_NOT_STATUS_ASSIGNED.getMessage(), response.getBody().get(MESSAGE));
     }
 }

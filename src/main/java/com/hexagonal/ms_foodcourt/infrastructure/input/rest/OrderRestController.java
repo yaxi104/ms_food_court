@@ -16,6 +16,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -158,6 +160,59 @@ public class OrderRestController {
                                                                                 @RequestParam(required = false) Integer size) {
         PaginatedResponse<OrderResponse> orderResponses = orderHandler.getAllOrderByStatus(status, idRestaurant, page, size);
         return ResponseEntity.ok(orderResponses);
+    }
+
+    @Operation(
+            summary = "Assign order to authenticated employee and set status to 'In Preparation'",
+            description = "Allows an authenticated employee to assign themselves to an order and update its status to 'In Preparation'. Only orders belonging to the employee's restaurant can be assigned.",
+            responses = {
+                    @ApiResponse(responseCode = "204", description = "Order successfully assigned and status updated"),
+                    @ApiResponse(responseCode = "400", description = "Invalid request",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(
+                                            name = "Bad Request Example",
+                                            value = """
+                                                    {
+                                                        "Message": "The request contains invalid data. Please check the submitted fields and try again"
+                                                    }
+                                                    """
+                                    )
+                            )
+                    ),
+                    @ApiResponse(responseCode = "403", description = "Forbidden",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(
+                                            name = "Forbidden Example",
+                                            value = """
+                                                    {
+                                                        "Message": "You do not have permission to assign this order"
+                                                    }
+                                                    """
+                                    )
+                            )
+                    ),
+                    @ApiResponse(responseCode = "404", description = "Order not found",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(
+                                            name = "Not Found Example",
+                                            value = """
+                                                    {
+                                                        "Message": "Order not found"
+                                                    }
+                                                    """
+                                    )
+                            )
+                    )
+            }
+    )
+    @PreAuthorize("hasRole('EMPLEADO')")
+    @PatchMapping("/assign/{orderId}")
+    public ResponseEntity<Void> assignOrderToEmployee(@PathVariable Long orderId) {
+        orderHandler.assignOrderToEmployee(orderId);
+        return ResponseEntity.noContent().build();
     }
 
 }
