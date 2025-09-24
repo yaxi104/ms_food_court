@@ -13,10 +13,6 @@ public class OrderRequest {
 
     @NotNull
     @Schema(description = "ID del restaurante", example = "8")
-    private Long idClient;
-
-    @NotNull
-    @Schema(description = "ID del restaurante", example = "8")
     private Long idRestaurant;
 
     @NotNull
