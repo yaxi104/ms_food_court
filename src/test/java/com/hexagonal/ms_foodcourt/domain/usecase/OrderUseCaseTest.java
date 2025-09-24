@@ -6,6 +6,7 @@ import com.hexagonal.ms_foodcourt.domain.exception.OrdenByIdClientExistsExceptio
 import com.hexagonal.ms_foodcourt.domain.exception.UserForbiddenException;
 import com.hexagonal.ms_foodcourt.domain.exception.UserNotExistsException;
 import com.hexagonal.ms_foodcourt.domain.model.Order;
+import com.hexagonal.ms_foodcourt.domain.model.OrderDish;
 import com.hexagonal.ms_foodcourt.domain.model.OrderReq;
 import com.hexagonal.ms_foodcourt.domain.model.PageInfo;
 import com.hexagonal.ms_foodcourt.domain.model.User;
@@ -70,28 +71,6 @@ class OrderUseCaseTest {
     }
 
     @Test
-    void saveOrderSuccess() {
-        String email = "cliente@correo.com";
-        Long clientId = 1L;
-        OrderReq orderReq = TestDataOrderFactory.mockOrderReq();
-        List<Long> dishIds = List.of(1L);
-
-        User user = new User();
-        user.setId(clientId);
-
-        when(userSessionPort.getCurrentUserEmail()).thenReturn(email);
-        when(userFeignPort.getUserByEmail(email)).thenReturn(Optional.of(user));
-        when(orderPersistencePort.existsByIdClientAndStatusList(eq(clientId), anyList())).thenReturn(false);
-        when(dishPersistencePort.countValidDishesByRestaurant((dishIds), (orderReq.getIdRestaurant()))).thenReturn(1L);
-        when(orderPersistencePort.saveOrder(any(Order.class))).thenReturn(123L);
-
-        orderUseCase.saveOrder(orderReq);
-
-        verify(orderPersistencePort).saveOrder(any(Order.class));
-        verify(orderDishPersistencePort).saveAllOrderDish(anyList());
-    }
-
-    @Test
     void saveOrderSuccessBadRequest() {
         OrderReq orderReq = TestDataOrderFactory.mockOrderReq();
         orderReq.setOrderDishList(null);
@@ -106,52 +85,108 @@ class OrderUseCaseTest {
     }
 
     @Test
-    void saveOrderThrowsWhenUserDoesNotExist() {
-        String email = "cliente@correo.com";
+    void saveOrderSuccess() {
+        Long clientId = 1L;
+        Long restaurantId = 10L;
+        OrderDish orderDish = new OrderDish();
+        orderDish.setIdDish(100L);
+        List<OrderDish> orderDishList = List.of(orderDish);
 
-        when(userSessionPort.getCurrentUserEmail()).thenReturn(email);
-        when(userFeignPort.getUserByEmail(email)).thenReturn(Optional.empty());
+        OrderReq orderReq = new OrderReq();
+        orderReq.setIdClient(clientId);
+        orderReq.setIdRestaurant(restaurantId);
+        orderReq.setOrderDishList(orderDishList);
 
-        OrderReq orderReq = TestDataOrderFactory.mockOrderReq();
+        User user = new User();
+        user.setId(clientId);
+
+        when(userSessionPort.getCurrentUserEmail()).thenReturn("test@example.com");
+        when(userFeignPort.getUserByEmail("test@example.com")).thenReturn(Optional.of(user));
+        when(orderPersistencePort.existsByIdClientAndStatusList(eq(clientId), anyList())).thenReturn(false);
+        when(dishPersistencePort.countValidDishesByRestaurant(anyList(), eq(restaurantId))).thenReturn(1L);
+        when(orderPersistencePort.saveOrder(any(Order.class))).thenReturn(123L);
+
+        orderUseCase.saveOrder(orderReq);
+
+        verify(orderPersistencePort).saveOrder(any(Order.class));
+        verify(orderDishPersistencePort).saveAllOrderDish(anyList());
+    }
+
+    @Test
+    void saveOrderThrowsBadRequestExceptionWhenOrderDishListIsEmpty() {
+        OrderReq orderReq = new OrderReq();
+        orderReq.setIdClient(1L);
+        orderReq.setIdRestaurant(10L);
+        orderReq.setOrderDishList(Collections.emptyList());
+
+        assertThrows(BadRequestException.class, () -> orderUseCase.saveOrder(orderReq));
+    }
+
+    @Test
+    void saveOrderThrowsUserNotExistsExceptionWhenUserNotFound() {
+        OrderReq orderReq = new OrderReq();
+        orderReq.setIdClient(1L);
+        orderReq.setIdRestaurant(10L);
+        orderReq.setOrderDishList(List.of(new OrderDish()));
+
+        when(userSessionPort.getCurrentUserEmail()).thenReturn("test@example.com");
+        when(userFeignPort.getUserByEmail("test@example.com")).thenReturn(Optional.empty());
 
         assertThrows(UserNotExistsException.class, () -> orderUseCase.saveOrder(orderReq));
     }
 
     @Test
-    void saveOrderThrowsWhenClientHasActiveOrder() {
-        String email = "cliente@correo.com";
-        Long clientId = 1L;
+    void saveOrderThrowsUserForbiddenExceptionWhenClientIdMismatch() {
+        OrderReq orderReq = new OrderReq();
+        orderReq.setIdClient(2L); // Diferente del user.id
+        orderReq.setIdRestaurant(10L);
+        orderReq.setOrderDishList(List.of(new OrderDish()));
 
         User user = new User();
-        user.setId(clientId);
+        user.setId(1L);
 
-        when(userSessionPort.getCurrentUserEmail()).thenReturn(email);
-        when(userFeignPort.getUserByEmail(email)).thenReturn(Optional.of(user));
-        when(orderPersistencePort.existsByIdClientAndStatusList(eq(clientId), anyList())).thenReturn(true);
+        when(userSessionPort.getCurrentUserEmail()).thenReturn("test@example.com");
+        when(userFeignPort.getUserByEmail("test@example.com")).thenReturn(Optional.of(user));
 
-        OrderReq orderReq = TestDataOrderFactory.mockOrderReq();
+        assertThrows(UserForbiddenException.class, () -> orderUseCase.saveOrder(orderReq));
+    }
+
+    @Test
+    void saveOrderThrowsOrdenByIdClientExistsExceptionWhenOrderAlreadyExists() {
+        OrderReq orderReq = new OrderReq();
+        orderReq.setIdClient(1L);
+        orderReq.setIdRestaurant(10L);
+        orderReq.setOrderDishList(List.of(new OrderDish()));
+
+        User user = new User();
+        user.setId(1L);
+
+        when(userSessionPort.getCurrentUserEmail()).thenReturn("test@example.com");
+        when(userFeignPort.getUserByEmail("test@example.com")).thenReturn(Optional.of(user));
+        when(orderPersistencePort.existsByIdClientAndStatusList(eq(1L), anyList())).thenReturn(true);
 
         assertThrows(OrdenByIdClientExistsException.class, () -> orderUseCase.saveOrder(orderReq));
     }
 
     @Test
-    void saveOrderThrowsWhenDishesNotFromRestaurant() {
-        String email = "cliente@correo.com";
-        Long clientId = 1L;
-        OrderReq orderReq = TestDataOrderFactory.mockOrderReq();
-        List<Long> dishIds = List.of(1L);
+    void saveOrderThrowsDishNotRestaurantExceptionWhenDishCountMismatch() {
+        OrderDish orderDish = new OrderDish();
+        orderDish.setIdDish(100L);
+
+        OrderReq orderReq = new OrderReq();
+        orderReq.setIdClient(1L);
+        orderReq.setIdRestaurant(10L);
+        orderReq.setOrderDishList(List.of(orderDish));
 
         User user = new User();
-        user.setId(clientId);
+        user.setId(1L);
 
-        when(userSessionPort.getCurrentUserEmail()).thenReturn(email);
-        when(userFeignPort.getUserByEmail(email)).thenReturn(Optional.of(user));
-        when(orderPersistencePort.existsByIdClientAndStatusList(eq(clientId), anyList())).thenReturn(false);
-        when(dishPersistencePort.countValidDishesByRestaurant((dishIds), (orderReq.getIdRestaurant()))).thenReturn(0L);
+        when(userSessionPort.getCurrentUserEmail()).thenReturn("test@example.com");
+        when(userFeignPort.getUserByEmail("test@example.com")).thenReturn(Optional.of(user));
+        when(orderPersistencePort.existsByIdClientAndStatusList(eq(1L), anyList())).thenReturn(false);
+        when(dishPersistencePort.countValidDishesByRestaurant(anyList(), eq(10L))).thenReturn(0L);
 
-        assertThrows(DishNotRestaurantException.class, () -> {
-            orderUseCase.saveOrder(orderReq);
-        });
+        assertThrows(DishNotRestaurantException.class, () -> orderUseCase.saveOrder(orderReq));
     }
 
     @Test

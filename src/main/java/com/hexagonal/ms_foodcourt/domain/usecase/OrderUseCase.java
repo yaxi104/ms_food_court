@@ -54,6 +54,8 @@ public class OrderUseCase implements IOrderServicePort {
 
     @Override
     public void saveOrder(OrderReq orderReq) {
+        Long idClient = orderReq.getIdClient();
+        ValidateRequest.checkId(idClient);
         ValidateRequest.checkId(orderReq.getIdRestaurant());
         List<OrderDish> orderDishList = orderReq.getOrderDishList();
         if (orderDishList == null || orderDishList.isEmpty()) {
@@ -61,7 +63,10 @@ public class OrderUseCase implements IOrderServicePort {
         }
 
         User userClient = userFeignPort.getUserByEmail(userSessionPort.getCurrentUserEmail()).orElseThrow(UserNotExistsException::new);
-        Long idClient = userClient.getId();
+
+        if (!Objects.equals(userClient.getId(), idClient)) {
+            throw new UserForbiddenException();
+        }
         if (orderPersistencePort.existsByIdClientAndStatusList(idClient, List.of(EN_PREPARACION, PENDIENTE, LISTO))) {
             throw new OrdenByIdClientExistsException();
         }

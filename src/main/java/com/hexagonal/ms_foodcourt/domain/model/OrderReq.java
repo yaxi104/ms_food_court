@@ -5,12 +5,14 @@ import java.util.List;
 
 public class OrderReq {
 
+    private Long idClient;
     private Long idRestaurant;
     private List<OrderDish> orderDishList;
     private LocalDateTime date;
     private String status;
 
-    public OrderReq(Long idRestaurant, List<OrderDish> orderDishList, LocalDateTime date, String status) {
+    public OrderReq(Long idClient, Long idRestaurant, List<OrderDish> orderDishList, LocalDateTime date, String status) {
+        this.idClient = idClient;
         this.idRestaurant = idRestaurant;
         this.orderDishList = orderDishList;
         this.date = date;
@@ -18,6 +20,14 @@ public class OrderReq {
     }
 
     public OrderReq() {
+    }
+
+    public Long getIdClient() {
+        return idClient;
+    }
+
+    public void setIdClient(Long idClient) {
+        this.idClient = idClient;
     }
 
     public Long getIdRestaurant() {
