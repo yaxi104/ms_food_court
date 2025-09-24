@@ -130,7 +130,6 @@ class RestaurantJpaAdapterTest {
 
         List<RestaurantEntity> entities = List.of(entity1, entity2);
         Pageable pageable = PageRequest.of(pageInfo.getPage(), pageInfo.getSize(), Sort.by(pageInfo.getSortBy()));
-
         Page<RestaurantEntity> entityPage = new PageImpl<>(entities, pageable, 5);
 
         when(restaurantRepository.findAllByOrderByNameAsc(pageable)).thenReturn(entityPage);
@@ -143,22 +142,20 @@ class RestaurantJpaAdapterTest {
         result2.setId(2L);
         result2.setName("Restaurant B");
 
-        when(restaurantEntityMapper.toResturantResult(entity1)).thenReturn(result1);
-        when(restaurantEntityMapper.toResturantResult(entity2)).thenReturn(result2);
+        List<RestaurantResult> expectedResults = List.of(result1, result2);
+
+        when(restaurantEntityMapper.toDtoList(entities)).thenReturn(expectedResults);
 
         PageResult<RestaurantResult> pageResult = restaurantJpaAdapter.getListRestaurant(pageInfo);
 
         assertNotNull(pageResult);
-        assertEquals(2, pageResult.getContent().size());
         assertEquals(5, pageResult.getTotalElements());
         assertEquals(3, pageResult.getTotalPages());
         assertFalse(pageResult.isLast());
-
-        assertEquals("Restaurant A", pageResult.getContent().get(0).getName());
-        assertEquals("Restaurant B", pageResult.getContent().get(1).getName());
+        assertEquals(expectedResults, pageResult.getContent());
 
         verify(restaurantRepository).findAllByOrderByNameAsc(pageable);
-        verify(restaurantEntityMapper, times(1)).toResturantResult(entity1);
-        verify(restaurantEntityMapper, times(1)).toResturantResult(entity2);
+        verify(restaurantEntityMapper, times(1)).toDtoList(entities);
     }
+
 }

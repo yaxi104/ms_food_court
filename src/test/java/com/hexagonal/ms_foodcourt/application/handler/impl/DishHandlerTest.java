@@ -5,16 +5,18 @@ import com.hexagonal.ms_foodcourt.application.dto.request.DishToggleStatusReques
 import com.hexagonal.ms_foodcourt.application.dto.request.DishUpdateRequest;
 import com.hexagonal.ms_foodcourt.application.dto.request.PaginatedResponse;
 import com.hexagonal.ms_foodcourt.application.dto.response.DishResponse;
-import com.hexagonal.ms_foodcourt.application.mapper.IDishRequestMapper;
+import com.hexagonal.ms_foodcourt.application.mapper.IDishMapper;
 import com.hexagonal.ms_foodcourt.domain.api.IDishServicePort;
 import com.hexagonal.ms_foodcourt.domain.model.Dish;
 import com.hexagonal.ms_foodcourt.domain.model.response.PageResult;
-import com.hexagonal.ms_foodcourt.util.TestDataDishFactory;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -22,13 +24,13 @@ import static org.mockito.Mockito.when;
 class DishHandlerTest {
 
     private IDishServicePort dishServicePort;
-    private IDishRequestMapper dishRequestMapper;
+    private IDishMapper dishRequestMapper;
     private DishHandler dishHandler;
 
     @BeforeEach
     void setUp() {
         dishServicePort = mock(IDishServicePort.class);
-        dishRequestMapper = mock(IDishRequestMapper.class);
+        dishRequestMapper = mock(IDishMapper.class);
         dishHandler = new DishHandler(dishServicePort, dishRequestMapper);
     }
 
@@ -69,34 +71,47 @@ class DishHandlerTest {
     }
 
     @Test
-    void getListDishesSuccessTest() {
+    void getListDishesReturnsPaginatedResponseTest() {
         Long restaurantId = 1L;
         Long categoryId = 2L;
         int page = 0;
-        int size = 10;
+        int size = 5;
 
-        PageResult<Dish> pageResult = new PageResult<>(TestDataDishFactory.mockDishes(), 1, 1L, true);
+        Dish dish1 = new Dish();
+        dish1.setId(10L);
+        dish1.setName("Plato 1");
 
-        DishResponse expectedResponse = new DishResponse();
-        expectedResponse.setId(1L);
-        expectedResponse.setName("Dish 1");
+        Dish dish2 = new Dish();
+        dish2.setId(20L);
+        dish2.setName("Plato 2");
 
-        Mockito.when(dishServicePort.getListDish(restaurantId, categoryId, page, size))
-                .thenReturn(pageResult);
+        List<Dish> dishes = List.of(dish1, dish2);
 
-        Mockito.when(dishRequestMapper.toDishResponse(Mockito.any(Dish.class)))
-                .thenReturn(expectedResponse);
+        PageResult<Dish> pageResult = new PageResult<>(dishes, 3, 12, false);
+
+        when(dishServicePort.getListDish(restaurantId, categoryId, page, size)).thenReturn(pageResult);
+
+        DishResponse response1 = new DishResponse();
+        response1.setId(10L);
+        response1.setName("Plato 1");
+
+        DishResponse response2 = new DishResponse();
+        response2.setId(20L);
+        response2.setName("Plato 2");
+
+        List<DishResponse> responseList = List.of(response1, response2);
+
+        when(dishRequestMapper.toDishResponseList(dishes)).thenReturn(responseList);
 
         PaginatedResponse<DishResponse> result = dishHandler.getListDishes(restaurantId, categoryId, page, size);
 
-        Assertions.assertNotNull(result);
-        Assertions.assertEquals(1, result.getContent().size());
-        Assertions.assertEquals("Dish 1", result.getContent().get(0).getName());
-        Assertions.assertEquals(1, result.getTotalPages());
-        Assertions.assertEquals(1L, result.getTotalElements());
-        Assertions.assertTrue(result.isLast());
+        assertNotNull(result);
+        assertEquals(responseList, result.getContent());
+        assertEquals(3, result.getTotalPages());
+        assertEquals(12, result.getTotalElements());
+        assertFalse(result.isLast());
 
-        Mockito.verify(dishServicePort).getListDish(restaurantId, categoryId, page, size);
-        Mockito.verify(dishRequestMapper).toDishResponse(Mockito.any(Dish.class));
+        verify(dishServicePort).getListDish(restaurantId, categoryId, page, size);
+        verify(dishRequestMapper).toDishResponseList(dishes);
     }
 }

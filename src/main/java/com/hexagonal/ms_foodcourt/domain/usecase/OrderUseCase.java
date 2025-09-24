@@ -4,20 +4,28 @@ import com.hexagonal.ms_foodcourt.domain.api.IOrderServicePort;
 import com.hexagonal.ms_foodcourt.domain.exception.BadRequestException;
 import com.hexagonal.ms_foodcourt.domain.exception.DishNotRestaurantException;
 import com.hexagonal.ms_foodcourt.domain.exception.OrdenByIdClientExistsException;
+import com.hexagonal.ms_foodcourt.domain.exception.UserForbiddenException;
 import com.hexagonal.ms_foodcourt.domain.exception.UserNotExistsException;
 import com.hexagonal.ms_foodcourt.domain.model.Order;
 import com.hexagonal.ms_foodcourt.domain.model.OrderDish;
 import com.hexagonal.ms_foodcourt.domain.model.OrderReq;
+import com.hexagonal.ms_foodcourt.domain.model.PageInfo;
 import com.hexagonal.ms_foodcourt.domain.model.User;
+import com.hexagonal.ms_foodcourt.domain.model.response.OrderDishResult;
+import com.hexagonal.ms_foodcourt.domain.model.response.OrderResult;
+import com.hexagonal.ms_foodcourt.domain.model.response.PageResult;
 import com.hexagonal.ms_foodcourt.domain.spi.IDishPersistencePort;
 import com.hexagonal.ms_foodcourt.domain.spi.IOrderDishPersistencePort;
 import com.hexagonal.ms_foodcourt.domain.spi.IOrderPersistencePort;
 import com.hexagonal.ms_foodcourt.domain.spi.IUserFeignPort;
 import com.hexagonal.ms_foodcourt.domain.spi.IUserSessionPort;
 import com.hexagonal.ms_foodcourt.domain.utils.DateHelper;
+import com.hexagonal.ms_foodcourt.domain.utils.PageableHelper;
 import com.hexagonal.ms_foodcourt.domain.utils.ValidateRequest;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import static com.hexagonal.ms_foodcourt.domain.utils.Constants.EN_PREPARACION;
 import static com.hexagonal.ms_foodcourt.domain.utils.Constants.LISTO;
@@ -78,5 +86,32 @@ public class OrderUseCase implements IOrderServicePort {
         orderDishList.forEach(orderDish -> orderDish.setIdOrder(orderId));
 
         orderDishPersistencePort.saveAllOrderDish(orderDishList);
+    }
+
+    @Override
+    public PageResult<OrderResult> getAllOrderByStatus(String status, Long idRestaurant, Integer page, Integer size) {
+        ValidateRequest.checkStatusOrderValid(status);
+        ValidateRequest.checkId(idRestaurant);
+        User userEmployee = userFeignPort.getUserByEmail(userSessionPort.getCurrentUserEmail()).orElseThrow(UserNotExistsException::new);
+        if (!Objects.equals(userEmployee.getRestaurantId(), idRestaurant)) {
+            throw new UserForbiddenException();
+        }
+
+        PageInfo pageInfo = PageableHelper.getPageable(page, size, "date");
+        PageResult<OrderResult> orderPage = orderPersistencePort.findByStatusAndIdRestaurant(status, idRestaurant, pageInfo);
+        List<OrderResult> orderList = orderPage.getContent();
+        if (orderList.isEmpty()) {
+            return new PageResult<>(Collections.emptyList(), 0, 0, false);
+        }
+
+        List<OrderResult> orderResults = orderList.stream().map(this::getOrderResult).toList();
+        orderPage.setContent(orderResults);
+        return orderPage;
+    }
+
+    private OrderResult getOrderResult(OrderResult orderResult) {
+        List<OrderDishResult> orderDishResults = orderDishPersistencePort.findAllByIdOrderWithNames(orderResult.getId());
+        orderResult.setOrderDishResponses(orderDishResults);
+        return orderResult;
     }
 }

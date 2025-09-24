@@ -9,10 +9,12 @@ import com.hexagonal.ms_foodcourt.domain.model.Dish;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring",
         unmappedSourcePolicy = ReportingPolicy.IGNORE,
         unmappedTargetPolicy = ReportingPolicy.IGNORE)
-public interface IDishRequestMapper {
+public interface IDishMapper {
 
     Dish toDish(DishRequest dishRequest);
 
@@ -21,4 +23,7 @@ public interface IDishRequestMapper {
     Dish toDishToggleStatus(DishToggleStatusRequest dishToggleStatusRequest);
 
     DishResponse toDishResponse(Dish dish);
+
+    List<DishResponse> toDishResponseList(List<Dish> dish);
+
 }

@@ -2,14 +2,20 @@ package com.hexagonal.ms_foodcourt.domain.utils;
 
 import com.hexagonal.ms_foodcourt.domain.exception.BadRequestException;
 
+import java.util.List;
 import java.util.regex.Pattern;
 
+import static com.hexagonal.ms_foodcourt.domain.utils.Constants.CANCELADO;
+import static com.hexagonal.ms_foodcourt.domain.utils.Constants.ENTREGADO;
+import static com.hexagonal.ms_foodcourt.domain.utils.Constants.EN_PREPARACION;
 import static com.hexagonal.ms_foodcourt.domain.utils.Constants.FALSE_STATUS;
+import static com.hexagonal.ms_foodcourt.domain.utils.Constants.LISTO;
 import static com.hexagonal.ms_foodcourt.domain.utils.Constants.MAX_LENGTH;
 import static com.hexagonal.ms_foodcourt.domain.utils.Constants.PATTERN_NAME;
 import static com.hexagonal.ms_foodcourt.domain.utils.Constants.PATTERN_NUMBER_PHONE;
 import static com.hexagonal.ms_foodcourt.domain.utils.Constants.PATTERN_ONLY_NUMBER;
 import static com.hexagonal.ms_foodcourt.domain.utils.Constants.PATTERN_URL;
+import static com.hexagonal.ms_foodcourt.domain.utils.Constants.PENDIENTE;
 import static com.hexagonal.ms_foodcourt.domain.utils.Constants.TRUE_STATUS;
 
 public class ValidateRequest {
@@ -78,6 +84,14 @@ public class ValidateRequest {
     public static void checkStatus(String active) {
         ValidateRequest.checkNotBlank(active);
         if (!active.equals(TRUE_STATUS) && !active.equals(FALSE_STATUS)) {
+            throw new BadRequestException();
+        }
+    }
+
+    public static void checkStatusOrderValid(String status) {
+        List<String> statusValidList = List.of(EN_PREPARACION, PENDIENTE, LISTO, ENTREGADO, CANCELADO);
+
+        if (!statusValidList.contains(status)) {
             throw new BadRequestException();
         }
     }

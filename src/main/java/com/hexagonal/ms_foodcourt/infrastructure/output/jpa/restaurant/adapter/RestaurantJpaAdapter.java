@@ -1,8 +1,8 @@
 package com.hexagonal.ms_foodcourt.infrastructure.output.jpa.restaurant.adapter;
 
 import com.hexagonal.ms_foodcourt.domain.model.PageInfo;
-import com.hexagonal.ms_foodcourt.domain.model.response.PageResult;
 import com.hexagonal.ms_foodcourt.domain.model.Restaurant;
+import com.hexagonal.ms_foodcourt.domain.model.response.PageResult;
 import com.hexagonal.ms_foodcourt.domain.model.response.RestaurantResult;
 import com.hexagonal.ms_foodcourt.domain.spi.IRestaurantPersistencePort;
 import com.hexagonal.ms_foodcourt.infrastructure.output.jpa.restaurant.entity.RestaurantEntity;
@@ -44,7 +44,7 @@ public class RestaurantJpaAdapter implements IRestaurantPersistencePort {
     public PageResult<RestaurantResult> getListRestaurant(PageInfo pageInfo) {
         Pageable pageable = PageRequest.of(pageInfo.getPage(), pageInfo.getSize(), Sort.by(pageInfo.getSortBy()));
         Page<RestaurantEntity> page = restaurantRepository.findAllByOrderByNameAsc(pageable);
-        List<RestaurantResult> content = page.map(restaurantEntityMapper::toResturantResult).toList();
+        List<RestaurantResult> content = restaurantEntityMapper.toDtoList(page.getContent());
         return new PageResult<>(content, page.getTotalPages(), page.getTotalElements(), page.isLast());
     }
 }

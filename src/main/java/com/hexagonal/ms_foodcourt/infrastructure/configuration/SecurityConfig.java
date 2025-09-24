@@ -17,6 +17,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import static com.hexagonal.ms_foodcourt.domain.utils.Constants.ROLE_ADMIN;
 import static com.hexagonal.ms_foodcourt.domain.utils.Constants.ROLE_CLIENTE;
+import static com.hexagonal.ms_foodcourt.domain.utils.Constants.ROLE_EMPLEADO;
 import static com.hexagonal.ms_foodcourt.domain.utils.Constants.ROLE_PROPIETARIO;
 
 @Configuration
@@ -53,6 +54,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/v1/restaurant/all**").hasRole(ROLE_CLIENTE)
                         .requestMatchers(HttpMethod.GET, "/api/v1/dish/all**").hasRole(ROLE_CLIENTE)
                         .requestMatchers(HttpMethod.POST, "/api/v1/order/customer").hasRole(ROLE_CLIENTE)
+                        .requestMatchers(HttpMethod.GET, "/api/v1/order/all**").hasRole(ROLE_EMPLEADO)
 
                         .anyRequest().authenticated()
                 )

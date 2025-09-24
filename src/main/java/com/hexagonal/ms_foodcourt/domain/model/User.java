@@ -13,6 +13,7 @@ public class User {
     private String email;
     private String password;
     private Long roleId;
+    private Long restaurantId;
 
     public User() {
     }
@@ -27,6 +28,7 @@ public class User {
         this.email = builder.email;
         this.password = builder.password;
         this.roleId = builder.roleId;
+        this.restaurantId = builder.restaurantId;
     }
 
     public static class Builder {
@@ -39,6 +41,7 @@ public class User {
         private String email;
         private String password;
         private Long roleId;
+        private Long restaurantId;
 
         public Builder id(Long id) {
             this.id = id;
@@ -82,6 +85,11 @@ public class User {
 
         public Builder roleId(Long roleId) {
             this.roleId = roleId;
+            return this;
+        }
+
+        public Builder restaurantId(Long restaurantId) {
+            this.restaurantId = restaurantId;
             return this;
         }
 
@@ -160,5 +168,13 @@ public class User {
 
     public void setRoleId(Long roleId) {
         this.roleId = roleId;
+    }
+
+    public Long getRestaurantId() {
+        return restaurantId;
+    }
+
+    public void setRestaurantId(Long restaurantId) {
+        this.restaurantId = restaurantId;
     }
 }

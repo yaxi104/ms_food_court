@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.hexagonal.ms_foodcourt.application.dto.request.OrderRequest;
+import com.hexagonal.ms_foodcourt.application.dto.request.PaginatedResponse;
+import com.hexagonal.ms_foodcourt.application.dto.response.OrderResponse;
 import com.hexagonal.ms_foodcourt.application.handler.IOrderHandler;
 import com.hexagonal.ms_foodcourt.infrastructure.exceptionhandler.ControllerAdvisor;
 import com.hexagonal.ms_foodcourt.util.TestDataOrderFactory;
@@ -18,10 +20,15 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.util.Collections;
+import java.util.List;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -63,6 +70,44 @@ class OrderRestControllerTest {
                 .andExpect(status().isCreated());
 
         verify(orderHandler).saveOrder(any(OrderRequest.class));
+    }
+
+    @Test
+    void getAllOrderByStatusSuccess() throws Exception {
+        String status = "PENDIENTE";
+        Long idRestaurant = 1L;
+        int page = 0;
+        int size = 2;
+
+        OrderResponse order1 = new OrderResponse();
+        order1.setId(101L);
+        order1.setStatus(status);
+        order1.setOrderDishResponses(Collections.emptyList());
+
+        OrderResponse order2 = new OrderResponse();
+        order2.setId(102L);
+        order2.setStatus(status);
+        order2.setOrderDishResponses(Collections.emptyList());
+
+        List<OrderResponse> orderResponses = List.of(order1, order2);
+
+
+        PaginatedResponse<OrderResponse> response = new PaginatedResponse<>(
+                orderResponses, 1, 2, true
+        );
+
+        when(orderHandler.getAllOrderByStatus(status, idRestaurant, page, size)).thenReturn(response);
+
+        mockMvc.perform(get("/api/v1/order/all")
+                        .param("status", status)
+                        .param("idRestaurant", idRestaurant.toString())
+                        .param("page", String.valueOf(page))
+                        .param("size", String.valueOf(size))
+                        .with(authentication(new TestingAuthenticationToken("empleado", "password", "ROLE_EMPLEADO")))
+                )
+                .andExpect(status().isOk());
+
+        verify(orderHandler).getAllOrderByStatus(status, idRestaurant, page, size);
     }
 
 }

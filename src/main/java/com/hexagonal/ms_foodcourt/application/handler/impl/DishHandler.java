@@ -7,7 +7,7 @@ import com.hexagonal.ms_foodcourt.application.dto.request.DishUpdateRequest;
 import com.hexagonal.ms_foodcourt.application.dto.request.PaginatedResponse;
 import com.hexagonal.ms_foodcourt.application.dto.response.DishResponse;
 import com.hexagonal.ms_foodcourt.application.handler.IDishHandler;
-import com.hexagonal.ms_foodcourt.application.mapper.IDishRequestMapper;
+import com.hexagonal.ms_foodcourt.application.mapper.IDishMapper;
 import com.hexagonal.ms_foodcourt.domain.api.IDishServicePort;
 import com.hexagonal.ms_foodcourt.domain.model.Dish;
 import com.hexagonal.ms_foodcourt.domain.model.response.PageResult;
@@ -23,7 +23,7 @@ import java.util.List;
 public class DishHandler implements IDishHandler {
 
     private final IDishServicePort dishServicePort;
-    private final IDishRequestMapper dishRequestMapper;
+    private final IDishMapper dishRequestMapper;
 
     @Override
     public void saveDish(DishRequest dishRequest) {
@@ -44,9 +44,7 @@ public class DishHandler implements IDishHandler {
     public PaginatedResponse<DishResponse> getListDishes(Long restaurantId, Long categoryId, Integer page, Integer size) {
         PageResult<Dish> resultPage = dishServicePort.getListDish(restaurantId, categoryId, page, size);
 
-        List<DishResponse> responseList = resultPage.getContent().stream()
-                .map(dishRequestMapper::toDishResponse)
-                .toList();
+        List<DishResponse> responseList = dishRequestMapper.toDishResponseList(resultPage.getContent());
 
         return new PaginatedResponse<>(
                 responseList,

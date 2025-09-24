@@ -30,4 +30,6 @@ public class UserFeign {
     private String password;
 
     private Long roleId;
+
+    private Long restaurantId;
 }

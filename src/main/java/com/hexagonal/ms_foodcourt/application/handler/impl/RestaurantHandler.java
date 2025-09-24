@@ -4,7 +4,7 @@ import com.hexagonal.ms_foodcourt.application.dto.request.PaginatedResponse;
 import com.hexagonal.ms_foodcourt.application.dto.request.RestaurantRequest;
 import com.hexagonal.ms_foodcourt.application.dto.response.RestaurantResponse;
 import com.hexagonal.ms_foodcourt.application.handler.IRestaurantHandler;
-import com.hexagonal.ms_foodcourt.application.mapper.IRestaurantRequestMapper;
+import com.hexagonal.ms_foodcourt.application.mapper.IRestaurantMapper;
 import com.hexagonal.ms_foodcourt.domain.api.IRestaurantServicePort;
 import com.hexagonal.ms_foodcourt.domain.model.response.PageResult;
 import com.hexagonal.ms_foodcourt.domain.model.response.RestaurantResult;
@@ -20,7 +20,7 @@ import java.util.List;
 public class RestaurantHandler implements IRestaurantHandler {
 
     private final IRestaurantServicePort restaurantServicePort;
-    private final IRestaurantRequestMapper restaurantRequestMapper;
+    private final IRestaurantMapper restaurantRequestMapper;
 
     @Override
     public void saveRestaurant(RestaurantRequest restaurantRequest) {
@@ -31,9 +31,7 @@ public class RestaurantHandler implements IRestaurantHandler {
     public PaginatedResponse<RestaurantResponse> getListRestaurants(Integer page, Integer size) {
         PageResult<RestaurantResult> resultPage = restaurantServicePort.getListRestaurant(page, size);
 
-        List<RestaurantResponse> responseList = resultPage.getContent().stream()
-                .map(restaurantRequestMapper::toRestaurantResponse)
-                .toList();
+        List<RestaurantResponse> responseList = restaurantRequestMapper.toRestaurantResponseList(resultPage.getContent());
 
         return new PaginatedResponse<>(
                 responseList,
