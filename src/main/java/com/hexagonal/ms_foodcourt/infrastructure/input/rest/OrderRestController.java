@@ -16,7 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -99,11 +98,33 @@ public class OrderRestController {
                                     examples = @ExampleObject(
                                             name = "Order List Response Example",
                                             value = """
-                                                    //                                                    {
-                                                    //                                                        "id": 1,
-                                                    //                                                        "name": "SUPERADMIN",
-                                                    //                                                        "description": "Super Administrador del sistema"
-                                                    //                                                    }
+                                                    {
+                                                        "content": [
+                                                            {
+                                                                "id": 5,
+                                                                "idClient": 4,
+                                                                "date": "2025-09-24T23:04:18",
+                                                                "status": "LISTO",
+                                                                "idRestaurant": 2,
+                                                                "idChef": null,
+                                                                "orderDishResponses": [
+                                                                    {
+                                                                        "idDish": 2,
+                                                                        "nameDish": "La Burguer max",
+                                                                        "quantity": 3
+                                                                    },
+                                                                    {
+                                                                        "idDish": 3,
+                                                                        "nameDish": "La Burguer vegan",
+                                                                        "quantity": 2
+                                                                    }
+                                                                ]
+                                                            }
+                                                        ],
+                                                        "totalPages": 1,
+                                                        "totalElements": 1,
+                                                        "last": true
+                                                    }
                                                     """
                                     )
                             )
@@ -209,10 +230,62 @@ public class OrderRestController {
             }
     )
     @PreAuthorize("hasRole('EMPLEADO')")
-    @PatchMapping("/assign/{orderId}")
+    @PostMapping("/assign/{orderId}")
     public ResponseEntity<Void> assignOrderToEmployee(@PathVariable Long orderId) {
         orderHandler.assignOrderToEmployee(orderId);
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(
+            summary = "Mark order as 'LISTO'",
+            description = "Marks the order status as 'LISTO' and triggers notification to the client. Only valid if order exists.",
+            responses = {
+                    @ApiResponse(responseCode = "204", description = "Order successfully marked as LISTO"),
+                    @ApiResponse(responseCode = "400", description = "Invalid request",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(
+                                            name = "Bad Request Example",
+                                            value = """
+                                                    {
+                                                        "Message": "The request contains invalid data. Please check the submitted fields and try again"
+                                                    }
+                                                    """
+                                    )
+                            )
+                    ),
+                    @ApiResponse(responseCode = "403", description = "Forbidden",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(
+                                            name = "Forbidden Example",
+                                            value = """
+                                                    {
+                                                        "Message": "You do not have permission to mark this order as ready"
+                                                    }
+                                                    """
+                                    )
+                            )
+                    ),
+                    @ApiResponse(responseCode = "404", description = "Order not found",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(
+                                            name = "Not Found Example",
+                                            value = """
+                                                    {
+                                                        "Message": "Order not found"
+                                                    }
+                                                    """
+                                    )
+                            )
+                    )
+            }
+    )
+    @PreAuthorize("hasRole('EMPLEADO')")
+    @PostMapping("/ready/{orderId}")
+    public ResponseEntity<Void> markOrderAsReady(@PathVariable Long orderId) {
+        orderHandler.markOrderAsReady(orderId);
+        return ResponseEntity.noContent().build();
+    }
 }

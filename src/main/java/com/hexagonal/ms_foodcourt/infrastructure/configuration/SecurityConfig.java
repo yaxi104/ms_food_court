@@ -55,7 +55,11 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/v1/dish/all**").hasRole(ROLE_CLIENTE)
                         .requestMatchers(HttpMethod.POST, "/api/v1/order/customer").hasRole(ROLE_CLIENTE)
                         .requestMatchers(HttpMethod.GET, "/api/v1/order/all**").hasRole(ROLE_EMPLEADO)
-                        .requestMatchers(HttpMethod.PATCH, "/api/v1/order/assign/**").hasRole(ROLE_EMPLEADO)
+                        .requestMatchers(HttpMethod.POST, "/api/v1/order/assign/**").hasRole(ROLE_EMPLEADO)
+                        .requestMatchers(HttpMethod.POST, "/api/v1/order/ready/**").hasRole(ROLE_EMPLEADO)
+                        .requestMatchers(HttpMethod.POST, "/api/v1/category/owner").hasRole(ROLE_PROPIETARIO)
+                        .requestMatchers(HttpMethod.GET, "/api/v1/category/all**").hasRole(ROLE_PROPIETARIO)
+                        .requestMatchers("/test-secure/**").authenticated()
 
                         .anyRequest().authenticated()
                 )

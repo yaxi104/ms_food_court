@@ -1,18 +1,30 @@
 package com.hexagonal.ms_foodcourt.infrastructure.configuration;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hexagonal.ms_foodcourt.domain.api.ICategoryServicePort;
 import com.hexagonal.ms_foodcourt.domain.api.IDishServicePort;
-import com.hexagonal.ms_foodcourt.domain.api.IOrderServicePort;
 import com.hexagonal.ms_foodcourt.domain.api.IRestaurantServicePort;
+import com.hexagonal.ms_foodcourt.domain.api.order.IOrderAssignServicePort;
+import com.hexagonal.ms_foodcourt.domain.api.order.IOrderGetListServicePort;
+import com.hexagonal.ms_foodcourt.domain.api.order.IOrderReadyServicePort;
+import com.hexagonal.ms_foodcourt.domain.api.order.IOrderSaveServicePort;
 import com.hexagonal.ms_foodcourt.domain.spi.ICategoryPersistencePort;
 import com.hexagonal.ms_foodcourt.domain.spi.IDishPersistencePort;
 import com.hexagonal.ms_foodcourt.domain.spi.IOrderDishPersistencePort;
 import com.hexagonal.ms_foodcourt.domain.spi.IOrderPersistencePort;
+import com.hexagonal.ms_foodcourt.domain.spi.IPinSecurityPort;
 import com.hexagonal.ms_foodcourt.domain.spi.IRestaurantPersistencePort;
+import com.hexagonal.ms_foodcourt.domain.spi.ISqsSenderServicePort;
 import com.hexagonal.ms_foodcourt.domain.spi.IUserFeignPort;
 import com.hexagonal.ms_foodcourt.domain.spi.IUserSessionPort;
+import com.hexagonal.ms_foodcourt.domain.usecase.CategoryUseCase;
 import com.hexagonal.ms_foodcourt.domain.usecase.DishUseCase;
-import com.hexagonal.ms_foodcourt.domain.usecase.OrderUseCase;
 import com.hexagonal.ms_foodcourt.domain.usecase.RestaurantUseCase;
+import com.hexagonal.ms_foodcourt.domain.usecase.order.OrderAssignUseCase;
+import com.hexagonal.ms_foodcourt.domain.usecase.order.OrderGetListUseCase;
+import com.hexagonal.ms_foodcourt.domain.usecase.order.OrderReadyUseCase;
+import com.hexagonal.ms_foodcourt.domain.usecase.order.OrderSaveUseCase;
+import com.hexagonal.ms_foodcourt.infrastructure.configuration.aws.AwsProperties;
 import com.hexagonal.ms_foodcourt.infrastructure.output.feign.user.adapter.UserFeignAdapter;
 import com.hexagonal.ms_foodcourt.infrastructure.output.feign.user.client.IUserServiceClient;
 import com.hexagonal.ms_foodcourt.infrastructure.output.feign.user.mapper.IUserFeignMapper;
@@ -31,10 +43,13 @@ import com.hexagonal.ms_foodcourt.infrastructure.output.jpa.orderdish.repository
 import com.hexagonal.ms_foodcourt.infrastructure.output.jpa.restaurant.adapter.RestaurantJpaAdapter;
 import com.hexagonal.ms_foodcourt.infrastructure.output.jpa.restaurant.mapper.IRestaurantEntityMapper;
 import com.hexagonal.ms_foodcourt.infrastructure.output.jpa.restaurant.repository.IRestaurantRepository;
+import com.hexagonal.ms_foodcourt.infrastructure.output.sqs.SqsSenderServiceAdapter;
+import com.hexagonal.ms_foodcourt.infrastructure.security.adapter.PinSecurityAdapter;
 import com.hexagonal.ms_foodcourt.infrastructure.security.adapter.UserSessionAdapter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import software.amazon.awssdk.services.sqs.SqsClient;
 
 @Configuration
 @RequiredArgsConstructor
@@ -52,6 +67,10 @@ public class BeanConfiguration {
     private final IOrderEntityMapper orderEntityMapper;
     private final IOrderDishRepository orderDishRepository;
     private final IOrderDishEntityMapper orderDishEntityMapper;
+    private final SqsClient sqsClient;
+    private final AwsProperties awsProperties;
+    private final ObjectMapper objectMapper;
+    private final ICategoryEntityMapper categoryMapper;
 
     @Bean
     public IRestaurantPersistencePort restaurantPersistencePort() {
@@ -89,6 +108,16 @@ public class BeanConfiguration {
     }
 
     @Bean
+    public IPinSecurityPort pinSecurityPort() {
+        return new PinSecurityAdapter();
+    }
+
+    @Bean
+    public ISqsSenderServicePort sqsSenderServicePort() {
+        return new SqsSenderServiceAdapter(sqsClient, objectMapper, awsProperties);
+    }
+
+    @Bean
     public IRestaurantServicePort restaurantServicePort() {
         return new RestaurantUseCase(restaurantPersistencePort(), userFeignPort());
     }
@@ -99,8 +128,27 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public IOrderServicePort orderServicePort() {
-        return new OrderUseCase(dishPersistencePort(), orderPersistencePort(), orderDishPersistencePort(), userFeignPort(), userSessionPort());
+    public IOrderSaveServicePort orderServicePort() {
+        return new OrderSaveUseCase(dishPersistencePort(), orderPersistencePort(), orderDishPersistencePort(), userFeignPort(), userSessionPort());
     }
 
+    @Bean
+    public IOrderAssignServicePort orderAssignServicePort() {
+        return new OrderAssignUseCase(orderPersistencePort(), userFeignPort(), userSessionPort());
+    }
+
+    @Bean
+    public IOrderReadyServicePort orderReadyServicePort() {
+        return new OrderReadyUseCase(orderPersistencePort(), userFeignPort(), userSessionPort(), pinSecurityPort(), sqsSenderServicePort());
+    }
+
+    @Bean
+    public IOrderGetListServicePort orderGetListServicePort() {
+        return new OrderGetListUseCase(orderPersistencePort(), orderDishPersistencePort(), userFeignPort(), userSessionPort());
+    }
+
+    @Bean
+    public ICategoryServicePort categoryServicePort() {
+        return new CategoryUseCase(categoryPersistencePort());
+    }
 }

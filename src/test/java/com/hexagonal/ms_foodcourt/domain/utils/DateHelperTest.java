@@ -11,10 +11,10 @@ class DateHelperTest {
 
     @Test
     void constructorIsPrivate() throws Exception {
-        Constructor<ValidateRequest> constructor = ValidateRequest.class.getDeclaredConstructor();
+        Constructor<DateHelper> constructor = DateHelper.class.getDeclaredConstructor();
         constructor.setAccessible(true);
 
-        ValidateRequest instance = constructor.newInstance();
+        DateHelper instance = constructor.newInstance();
         assertNotNull(instance);
     }
 

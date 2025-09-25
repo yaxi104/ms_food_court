@@ -97,56 +97,32 @@ public class RestaurantRestController {
                                             name = "User Response Example",
                                             value = """
                                                     {
-                                                      "content": [
-                                                        {
-                                                          "name": "A la 1 a la 2 a la 3",
-                                                          "urlLogo": "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.freepik.es%2Ffotos-vectores-gratis%2Flogo-design&psig=AOvVaw2g9G0Sld15LB9VVzwp1f5-&ust=1758314236215000&source=images&cd=vfe&opi=89978449&ved=0CBUQjRxqFwoTCICW7YyV448DFQAAAAAdAAAAABAE"
-                                                        },
-                                                        {
-                                                          "name": "La piña del pingüino 5",
-                                                          "urlLogo": "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.freepik.es%2Ffotos-vectores-gratis%2Flogo-design&psig=AOvVaw2g9G0Sld15LB9VVzwp1f5-&ust=1758314236215000&source=images&cd=vfe&opi=89978449&ved=0CBUQjRxqFwoTCICW7YyV448DFQAAAAAdAAAAABAE"
-                                                        },
-                                                        {
-                                                          "name": "Zaza ya cuza ya cuza",
-                                                          "urlLogo": "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.freepik.es%2Ffotos-vectores-gratis%2Flogo-design&psig=AOvVaw2g9G0Sld15LB9VVzwp1f5-&ust=1758314236215000&source=images&cd=vfe&opi=89978449&ved=0CBUQjRxqFwoTCICW7YyV448DFQAAAAAdAAAAABAE"
-                                                        }
-                                                      ],
-                                                      "pageable": {
-                                                        "pageNumber": 0,
-                                                        "pageSize": 4,
-                                                        "sort": [
-                                                          {
-                                                            "direction": "ASC",
-                                                            "property": "name",
-                                                            "ignoreCase": false,
-                                                            "nullHandling": "NATIVE",
-                                                            "ascending": true,
-                                                            "descending": false
-                                                          }
-                                                        ],
-                                                        "offset": 0,
-                                                        "paged": true,
-                                                        "unpaged": false
-                                                      },
-                                                      "totalPages": 1,
-                                                      "totalElements": 3,
-                                                      "last": true,
-                                                      "size": 4,
-                                                      "number": 0,
-                                                      "sort": [
-                                                        {
-                                                          "direction": "ASC",
-                                                          "property": "name",
-                                                          "ignoreCase": false,
-                                                          "nullHandling": "NATIVE",
-                                                          "ascending": true,
-                                                          "descending": false
-                                                        }
-                                                      ],
-                                                      "numberOfElements": 3,
-                                                      "first": true,
-                                                      "empty": false
-                                                    }
+                                                         "content": [
+                                                             {
+                                                                 "id": 3,
+                                                                 "name": "A la 1 a la 2 a la 3",
+                                                                 "urlLogo": "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.freepik.es%2Ffotos-vectores-gratis%2Flogo-design&psig=AOvVaw2g9G0Sld15LB9VVzwp1f5-&ust=1758314236215000&source=images&cd=vfe&opi=89978449&ved=0CBUQjRxqFwoTCICW7YyV448DFQAAAAAdAAAAABAE"
+                                                             },
+                                                             {
+                                                                 "id": 1,
+                                                                 "name": "La piña del pingüino 5",
+                                                                 "urlLogo": "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.freepik.es%2Ffotos-vectores-gratis%2Flogo-design&psig=AOvVaw2g9G0Sld15LB9VVzwp1f5-&ust=1758314236215000&source=images&cd=vfe&opi=89978449&ved=0CBUQjRxqFwoTCICW7YyV448DFQAAAAAdAAAAABAE"
+                                                             },
+                                                             {
+                                                                 "id": 4,
+                                                                 "name": "Zaza mesa",
+                                                                 "urlLogo": "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.freepik.es%2Ffotos-vectores-gratis%2Flogo-design&psig=AOvVaw2g9G0Sld15LB9VVzwp1f5-&ust=1758314236215000&source=images&cd=vfe&opi=89978449&ved=0CBUQjRxqFwoTCICW7YyV448DFQAAAAAdAAAAABAE"
+                                                             },
+                                                             {
+                                                                 "id": 2,
+                                                                 "name": "Zaza ya cuza ya cuza",
+                                                                 "urlLogo": "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.freepik.es%2Ffotos-vectores-gratis%2Flogo-design&psig=AOvVaw2g9G0Sld15LB9VVzwp1f5-&ust=1758314236215000&source=images&cd=vfe&opi=89978449&ved=0CBUQjRxqFwoTCICW7YyV448DFQAAAAAdAAAAABAE"
+                                                             }
+                                                         ],
+                                                         "totalPages": 1,
+                                                         "totalElements": 4,
+                                                         "last": true
+                                                     }
                                                     """
                                     )
                             )

@@ -1,8 +1,8 @@
 package com.hexagonal.ms_foodcourt.infrastructure.output.jpa.restaurant.adapter;
 
 import com.hexagonal.ms_foodcourt.domain.model.PageInfo;
-import com.hexagonal.ms_foodcourt.domain.model.response.PageResult;
 import com.hexagonal.ms_foodcourt.domain.model.Restaurant;
+import com.hexagonal.ms_foodcourt.domain.model.response.PageResult;
 import com.hexagonal.ms_foodcourt.domain.model.response.RestaurantResult;
 import com.hexagonal.ms_foodcourt.infrastructure.output.jpa.restaurant.entity.RestaurantEntity;
 import com.hexagonal.ms_foodcourt.infrastructure.output.jpa.restaurant.mapper.IRestaurantEntityMapper;
@@ -156,6 +156,24 @@ class RestaurantJpaAdapterTest {
 
         verify(restaurantRepository).findAllByOrderByNameAsc(pageable);
         verify(restaurantEntityMapper, times(1)).toDtoList(entities);
+    }
+
+    @Test
+    void findByIdTest() {
+        Long idRestaurant = 1L;
+        RestaurantEntity restaurantEntity = TestDataRestaurantFactory.mockRestaurantEntity();
+        Restaurant mockRestaurant = TestDataRestaurantFactory.mockRestaurant();
+
+        when(restaurantRepository.findById(idRestaurant)).thenReturn(Optional.of(restaurantEntity));
+        when(restaurantEntityMapper.toRestaurant(restaurantEntity)).thenReturn(mockRestaurant);
+
+        Optional<Restaurant> result = restaurantJpaAdapter.findById(idRestaurant);
+
+        assertTrue(result.isPresent());
+        assertEquals(mockRestaurant, result.get());
+        verify(restaurantRepository).findById(idRestaurant);
+        verify(restaurantEntityMapper).toRestaurant(restaurantEntity);
+
     }
 
 }

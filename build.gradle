@@ -7,13 +7,14 @@ plugins {
 
 group = 'com.hexagonal'
 version = '0.0.1-SNAPSHOT'
-description = 'Microservicio para crear restaurantes'
+description = 'Microservicio para administrar la plazoleta'
 
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(17)
     }
 }
+
 dependencyManagement {
     imports {
         mavenBom "org.springframework.cloud:spring-cloud-dependencies:2023.0.1"
@@ -40,6 +41,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+    implementation platform('software.amazon.awssdk:bom:2.25.33')
+    implementation 'software.amazon.awssdk:sqs'
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.mysql:mysql-connector-j'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
@@ -51,11 +54,20 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
-tasks.named('test') {
-    useJUnitPlatform()
-}
-
 test {
+    useJUnitPlatform()
+    exclude(
+            '**/dto/**',
+            '**/mapper/**',
+            '**/*Constants.class',
+            '**/exception/**',
+            '**/entity/**',
+            '**/model/**',
+            '**/repository/**',
+            '**/client/**',
+            '**/configuration/**',
+            '**/MsFoodCourtApplicationTests.class'
+    )
     finalizedBy jacocoTestReport
 }
 
@@ -76,6 +88,7 @@ jacocoTestReport {
                             '**/*entity/**',
                             '**/*model/**',
                             '**/*repository/**',
+                            '**/configuration/**',
                             '**/*client/**'
                     ])
         }))

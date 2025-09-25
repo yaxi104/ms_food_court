@@ -1,6 +1,7 @@
 package com.hexagonal.ms_foodcourt.infrastructure.exceptionhandler;
 
 import com.hexagonal.ms_foodcourt.domain.exception.BadRequestException;
+import com.hexagonal.ms_foodcourt.domain.exception.CategoryAlreadyExistsException;
 import com.hexagonal.ms_foodcourt.domain.exception.CategoryNotFoundException;
 import com.hexagonal.ms_foodcourt.domain.exception.DishAlreadyExistsException;
 import com.hexagonal.ms_foodcourt.domain.exception.DishNotFoundException;
@@ -8,10 +9,12 @@ import com.hexagonal.ms_foodcourt.domain.exception.DishNotRestaurantException;
 import com.hexagonal.ms_foodcourt.domain.exception.OrdenByIdClientExistsException;
 import com.hexagonal.ms_foodcourt.domain.exception.OrderNotFoundException;
 import com.hexagonal.ms_foodcourt.domain.exception.OrderStatusNotAssignedException;
+import com.hexagonal.ms_foodcourt.domain.exception.OrderStatusNotReadyException;
 import com.hexagonal.ms_foodcourt.domain.exception.RestaurantAlreadyExistsException;
 import com.hexagonal.ms_foodcourt.domain.exception.UserForbiddenException;
 import com.hexagonal.ms_foodcourt.domain.exception.UserNotExistsException;
 import com.hexagonal.ms_foodcourt.infrastructure.exception.NoAuthenticatedUserException;
+import com.hexagonal.ms_foodcourt.infrastructure.exception.SqsSendException;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -141,7 +144,7 @@ class ControllerAdvisorTest {
     }
 
     @Test
-    void handleOrdenByIdClientExistsExceptionExceptionReturnsConflict() {
+    void handleOrdenByIdClientExistsExceptionReturnsConflict() {
         OrdenByIdClientExistsException ex = mock(OrdenByIdClientExistsException.class);
 
         ResponseEntity<Map<String, String>> response = controllerAdvisor.handleOrdenByIdClientExistsException(ex);
@@ -152,7 +155,7 @@ class ControllerAdvisorTest {
     }
 
     @Test
-    void handleOrderNotFoundExceptionExceptionReturnsConflict() {
+    void handleOrderNotFoundExceptionReturnsConflict() {
         OrderNotFoundException ex = mock(OrderNotFoundException.class);
 
         ResponseEntity<Map<String, String>> response = controllerAdvisor.handleOrderNotFoundException(ex);
@@ -163,7 +166,7 @@ class ControllerAdvisorTest {
     }
 
     @Test
-    void handleOrderStatusNotAssignedExceptionExceptionReturnsConflict() {
+    void handleOrderStatusNotAssignedExceptionReturnsConflict() {
         OrderStatusNotAssignedException ex = mock(OrderStatusNotAssignedException.class);
 
         ResponseEntity<Map<String, String>> response = controllerAdvisor.handleOrderStatusNotAssignedException(ex);
@@ -172,4 +175,38 @@ class ControllerAdvisorTest {
         assertNotNull(response.getBody());
         assertEquals(ExceptionResponse.ORDER_NOT_STATUS_ASSIGNED.getMessage(), response.getBody().get(MESSAGE));
     }
+
+    @Test
+    void handleOrderStatusNotReadyExceptionReturnsConflict() {
+        OrderStatusNotReadyException ex = mock(OrderStatusNotReadyException.class);
+
+        ResponseEntity<Map<String, String>> response = controllerAdvisor.handleOrderStatusNotReadyException(ex);
+
+        assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(ExceptionResponse.ORDER_NOT_STATUS_READY.getMessage(), response.getBody().get(MESSAGE));
+    }
+
+    @Test
+    void handleCategoryAlreadyExistsExceptionReturnsConflict() {
+        CategoryAlreadyExistsException ex = mock(CategoryAlreadyExistsException.class);
+
+        ResponseEntity<Map<String, String>> response = controllerAdvisor.handleCategoryAlreadyExistsException(ex);
+
+        assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(ExceptionResponse.CATEGORY_ALREADY_EXISTS.getMessage(), response.getBody().get(MESSAGE));
+    }
+
+    @Test
+    void handleSqsSendExceptionReturnsConflict() {
+        SqsSendException ex = mock(SqsSendException.class);
+
+        ResponseEntity<Map<String, String>> response = controllerAdvisor.handleSqsSendException(ex);
+
+        assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(ExceptionResponse.SQS_SEND_ERROR.getMessage(), response.getBody().get(MESSAGE));
+    }
+
 }

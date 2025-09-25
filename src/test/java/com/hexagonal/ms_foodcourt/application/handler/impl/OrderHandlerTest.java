@@ -4,7 +4,10 @@ import com.hexagonal.ms_foodcourt.application.dto.request.OrderRequest;
 import com.hexagonal.ms_foodcourt.application.dto.request.PaginatedResponse;
 import com.hexagonal.ms_foodcourt.application.dto.response.OrderResponse;
 import com.hexagonal.ms_foodcourt.application.mapper.IOrderMapper;
-import com.hexagonal.ms_foodcourt.domain.api.IOrderServicePort;
+import com.hexagonal.ms_foodcourt.domain.api.order.IOrderAssignServicePort;
+import com.hexagonal.ms_foodcourt.domain.api.order.IOrderGetListServicePort;
+import com.hexagonal.ms_foodcourt.domain.api.order.IOrderReadyServicePort;
+import com.hexagonal.ms_foodcourt.domain.api.order.IOrderSaveServicePort;
 import com.hexagonal.ms_foodcourt.domain.model.OrderReq;
 import com.hexagonal.ms_foodcourt.domain.model.response.OrderResult;
 import com.hexagonal.ms_foodcourt.domain.model.response.PageResult;
@@ -28,7 +31,16 @@ import static org.mockito.Mockito.when;
 class OrderHandlerTest {
 
     @Mock
-    private IOrderServicePort orderServicePort;
+    private IOrderSaveServicePort orderSaveServicePort;
+
+    @Mock
+    private IOrderGetListServicePort orderGetListServicePort;
+
+    @Mock
+    private IOrderAssignServicePort orderAssignServicePort;
+
+    @Mock
+    private IOrderReadyServicePort orderReadyServicePort;
 
     @Mock
     private IOrderMapper orderRequestMapper;
@@ -47,7 +59,7 @@ class OrderHandlerTest {
         orderHandler.saveOrder(orderRequest);
 
         verify(orderRequestMapper).toOrderReq(orderRequest);
-        verify(orderServicePort).saveOrder(mockOrderReq);
+        verify(orderSaveServicePort).saveOrder(mockOrderReq);
     }
 
     @Test
@@ -68,7 +80,7 @@ class OrderHandlerTest {
         List<OrderResult> orderResults = List.of(order1, order2);
         PageResult<OrderResult> resultPage = new PageResult<>(orderResults, 3, 6, false);
 
-        when(orderServicePort.getAllOrderByStatus(status, restaurantId, page, size)).thenReturn(resultPage);
+        when(orderGetListServicePort.getAllOrderByStatus(status, restaurantId, page, size)).thenReturn(resultPage);
 
         OrderResponse response1 = new OrderResponse();
         response1.setId(10L);
@@ -90,7 +102,7 @@ class OrderHandlerTest {
         assertEquals(6, result.getTotalElements());
         assertFalse(result.isLast());
 
-        verify(orderServicePort).getAllOrderByStatus(status, restaurantId, page, size);
+        verify(orderGetListServicePort).getAllOrderByStatus(status, restaurantId, page, size);
         verify(orderRequestMapper).toOrderResponseList(orderResults);
     }
 
@@ -100,7 +112,16 @@ class OrderHandlerTest {
 
         orderHandler.assignOrderToEmployee(orderId);
 
-        verify(orderServicePort, times(1)).assignOrderToEmployee(orderId);
+        verify(orderAssignServicePort, times(1)).assignOrderToEmployee(orderId);
+    }
+
+    @Test
+    void markOrderAsReadyTest() {
+        Long orderId = 123L;
+
+        orderHandler.markOrderAsReady(orderId);
+
+        verify(orderReadyServicePort, times(1)).markOrderAsReady(orderId);
     }
 
 }

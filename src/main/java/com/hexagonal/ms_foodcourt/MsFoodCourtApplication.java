@@ -6,7 +6,6 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @SpringBootApplication
 @EnableFeignClients
-//@EnableFeignClients(basePackages = "com.hexagonal.ms_foodcourt.infrastructure.output.feign.client")
 public class MsFoodCourtApplication {
 
     public static void main(String[] args) {

@@ -1,39 +1,29 @@
-package com.hexagonal.ms_foodcourt.domain.usecase;
+package com.hexagonal.ms_foodcourt.domain.usecase.order;
 
-import com.hexagonal.ms_foodcourt.domain.api.IOrderServicePort;
+import com.hexagonal.ms_foodcourt.domain.api.order.IOrderSaveServicePort;
 import com.hexagonal.ms_foodcourt.domain.exception.BadRequestException;
 import com.hexagonal.ms_foodcourt.domain.exception.DishNotRestaurantException;
 import com.hexagonal.ms_foodcourt.domain.exception.OrdenByIdClientExistsException;
-import com.hexagonal.ms_foodcourt.domain.exception.OrderNotFoundException;
-import com.hexagonal.ms_foodcourt.domain.exception.OrderStatusNotAssignedException;
-import com.hexagonal.ms_foodcourt.domain.exception.UserForbiddenException;
 import com.hexagonal.ms_foodcourt.domain.exception.UserNotExistsException;
 import com.hexagonal.ms_foodcourt.domain.model.Order;
 import com.hexagonal.ms_foodcourt.domain.model.OrderDish;
 import com.hexagonal.ms_foodcourt.domain.model.OrderReq;
-import com.hexagonal.ms_foodcourt.domain.model.PageInfo;
 import com.hexagonal.ms_foodcourt.domain.model.User;
-import com.hexagonal.ms_foodcourt.domain.model.response.OrderDishResult;
-import com.hexagonal.ms_foodcourt.domain.model.response.OrderResult;
-import com.hexagonal.ms_foodcourt.domain.model.response.PageResult;
 import com.hexagonal.ms_foodcourt.domain.spi.IDishPersistencePort;
 import com.hexagonal.ms_foodcourt.domain.spi.IOrderDishPersistencePort;
 import com.hexagonal.ms_foodcourt.domain.spi.IOrderPersistencePort;
 import com.hexagonal.ms_foodcourt.domain.spi.IUserFeignPort;
 import com.hexagonal.ms_foodcourt.domain.spi.IUserSessionPort;
 import com.hexagonal.ms_foodcourt.domain.utils.DateHelper;
-import com.hexagonal.ms_foodcourt.domain.utils.PageableHelper;
 import com.hexagonal.ms_foodcourt.domain.utils.ValidateRequest;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 import static com.hexagonal.ms_foodcourt.domain.utils.Constants.EN_PREPARACION;
 import static com.hexagonal.ms_foodcourt.domain.utils.Constants.LISTO;
 import static com.hexagonal.ms_foodcourt.domain.utils.Constants.PENDIENTE;
 
-public class OrderUseCase implements IOrderServicePort {
+public class OrderSaveUseCase implements IOrderSaveServicePort {
 
     private final IDishPersistencePort dishPersistencePort;
     private final IOrderPersistencePort orderPersistencePort;
@@ -41,18 +31,17 @@ public class OrderUseCase implements IOrderServicePort {
     private final IUserFeignPort userFeignPort;
     private final IUserSessionPort userSessionPort;
 
-    public OrderUseCase(IDishPersistencePort dishPersistencePort,
-                        IOrderPersistencePort orderPersistencePort,
-                        IOrderDishPersistencePort orderDishPersistencePort,
-                        IUserFeignPort userFeignPort,
-                        IUserSessionPort userSessionPort) {
+    public OrderSaveUseCase(IDishPersistencePort dishPersistencePort,
+                            IOrderPersistencePort orderPersistencePort,
+                            IOrderDishPersistencePort orderDishPersistencePort,
+                            IUserFeignPort userFeignPort,
+                            IUserSessionPort userSessionPort) {
         this.dishPersistencePort = dishPersistencePort;
         this.orderPersistencePort = orderPersistencePort;
         this.orderDishPersistencePort = orderDishPersistencePort;
         this.userFeignPort = userFeignPort;
         this.userSessionPort = userSessionPort;
     }
-
 
     @Override
     public void saveOrder(OrderReq orderReq) {
@@ -90,45 +79,4 @@ public class OrderUseCase implements IOrderServicePort {
         orderDishPersistencePort.saveAllOrderDish(orderDishList);
     }
 
-    @Override
-    public PageResult<OrderResult> getAllOrderByStatus(String status, Long idRestaurant, Integer page, Integer size) {
-        ValidateRequest.checkStatusOrderValid(status);
-        ValidateRequest.checkId(idRestaurant);
-        User userEmployee = userFeignPort.getUserByEmail(userSessionPort.getCurrentUserEmail()).orElseThrow(UserNotExistsException::new);
-        if (!Objects.equals(userEmployee.getRestaurantId(), idRestaurant)) {
-            throw new UserForbiddenException();
-        }
-
-        PageInfo pageInfo = PageableHelper.getPageable(page, size, "date");
-        PageResult<OrderResult> orderPage = orderPersistencePort.findByStatusAndIdRestaurant(status, idRestaurant, pageInfo);
-        List<OrderResult> orderList = orderPage.getContent();
-        if (orderList.isEmpty()) {
-            return new PageResult<>(Collections.emptyList(), 0, 0, false);
-        }
-
-        List<OrderResult> orderResults = orderList.stream().map(this::getOrderResult).toList();
-        orderPage.setContent(orderResults);
-        return orderPage;
-    }
-
-    @Override
-    public void assignOrderToEmployee(Long orderId) {
-        ValidateRequest.checkId(orderId);
-        User userEmployee = userFeignPort.getUserByEmail(userSessionPort.getCurrentUserEmail()).orElseThrow(UserNotExistsException::new);
-        Order order = orderPersistencePort.findById(orderId).orElseThrow(OrderNotFoundException::new);
-
-        if (!Objects.equals(order.getStatus(), PENDIENTE)) {
-            throw new OrderStatusNotAssignedException();
-        }
-        order.setIdChef(userEmployee.getId());
-        order.setStatus(EN_PREPARACION);
-        order.setDate(DateHelper.dateBogota());
-        orderPersistencePort.saveOrder(order);
-    }
-
-    private OrderResult getOrderResult(OrderResult orderResult) {
-        List<OrderDishResult> orderDishResults = orderDishPersistencePort.findAllByIdOrderWithNames(orderResult.getId());
-        orderResult.setOrderDishResponses(orderDishResults);
-        return orderResult;
-    }
 }

@@ -40,4 +40,7 @@ public class OrderEntity {
     @Column(name = "id_restaurante", nullable = false)
     private Long idRestaurant;
 
+    @Column(name = "pin", length = 100)
+    private String pin;
+
 }

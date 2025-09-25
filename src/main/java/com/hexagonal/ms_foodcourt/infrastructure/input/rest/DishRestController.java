@@ -214,59 +214,35 @@ public class DishRestController {
                             content = @Content(
                                     mediaType = "application/json",
                                     examples = @ExampleObject(
-                                            name = "User Response Example",
+                                            name = "Dish Response Example",
                                             value = """
                                                     {
-                                                      "content": [
-                                                        {
-                                                          "name": "A la 1 a la 2 a la 3",
-                                                          "urlLogo": "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.freepik.es%2Ffotos-vectores-gratis%2Flogo-design&psig=AOvVaw2g9G0Sld15LB9VVzwp1f5-&ust=1758314236215000&source=images&cd=vfe&opi=89978449&ved=0CBUQjRxqFwoTCICW7YyV448DFQAAAAAdAAAAABAE"
-                                                        },
-                                                        {
-                                                          "name": "La piña del pingüino 5",
-                                                          "urlLogo": "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.freepik.es%2Ffotos-vectores-gratis%2Flogo-design&psig=AOvVaw2g9G0Sld15LB9VVzwp1f5-&ust=1758314236215000&source=images&cd=vfe&opi=89978449&ved=0CBUQjRxqFwoTCICW7YyV448DFQAAAAAdAAAAABAE"
-                                                        },
-                                                        {
-                                                          "name": "Zaza ya cuza ya cuza",
-                                                          "urlLogo": "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.freepik.es%2Ffotos-vectores-gratis%2Flogo-design&psig=AOvVaw2g9G0Sld15LB9VVzwp1f5-&ust=1758314236215000&source=images&cd=vfe&opi=89978449&ved=0CBUQjRxqFwoTCICW7YyV448DFQAAAAAdAAAAABAE"
-                                                        }
-                                                      ],
-                                                      "pageable": {
-                                                        "pageNumber": 0,
-                                                        "pageSize": 4,
-                                                        "sort": [
-                                                          {
-                                                            "direction": "ASC",
-                                                            "property": "name",
-                                                            "ignoreCase": false,
-                                                            "nullHandling": "NATIVE",
-                                                            "ascending": true,
-                                                            "descending": false
-                                                          }
-                                                        ],
-                                                        "offset": 0,
-                                                        "paged": true,
-                                                        "unpaged": false
-                                                      },
-                                                      "totalPages": 1,
-                                                      "totalElements": 3,
-                                                      "last": true,
-                                                      "size": 4,
-                                                      "number": 0,
-                                                      "sort": [
-                                                        {
-                                                          "direction": "ASC",
-                                                          "property": "name",
-                                                          "ignoreCase": false,
-                                                          "nullHandling": "NATIVE",
-                                                          "ascending": true,
-                                                          "descending": false
-                                                        }
-                                                      ],
-                                                      "numberOfElements": 3,
-                                                      "first": true,
-                                                      "empty": false
-                                                    }
+                                                         "content": [
+                                                             {
+                                                                 "id": 2,
+                                                                 "name": "La Burguer max",
+                                                                 "price": 60000,
+                                                                 "description": "Hamburguesa triple carne, pollo desmechado, tocineta, cebolla caramelizada max triple",
+                                                                 "imageUrl": "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.freepik.es%2Ffotos-vectores-gratis%2Flogo-design&psig=AOvVaw2g9G0Sld15LB9VVzwp1f5-&ust=1758314236215000&source=images&cd=vfe&opi=89978449&ved=0CBUQjRxqFwoTCICW7YyV448DFQAAAAAdAAAAABAE",
+                                                                 "categoryId": 1,
+                                                                 "restaurantId": 2,
+                                                                 "active": "true"
+                                                             },
+                                                             {
+                                                                 "id": 3,
+                                                                 "name": "La Burguer vegan",
+                                                                 "price": 80000,
+                                                                 "description": "Hamburguesa triple carne, pollo desmechado, tocineta, cebolla caramelizada max triple max vegan",
+                                                                 "imageUrl": "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.freepik.es%2Ffotos-vectores-gratis%2Flogo-design&psig=AOvVaw2g9G0Sld15LB9VVzwp1f5-&ust=1758314236215000&source=images&cd=vfe&opi=89978449&ved=0CBUQjRxqFwoTCICW7YyV448DFQAAAAAdAAAAABAE",
+                                                                 "categoryId": 3,
+                                                                 "restaurantId": 2,
+                                                                 "active": "true"
+                                                             }
+                                                         ],
+                                                         "totalPages": 1,
+                                                         "totalElements": 2,
+                                                         "last": true
+                                                     }
                                                     """
                                     )
                             )

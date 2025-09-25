@@ -12,4 +12,7 @@ public interface IOrderHandler {
     PaginatedResponse<OrderResponse> getAllOrderByStatus(String status, Long idRestaurant, Integer page, Integer size);
 
     void assignOrderToEmployee(Long orderId);
+
+    void markOrderAsReady(Long idOrder);
+
 }
