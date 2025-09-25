@@ -1,6 +1,8 @@
 package com.hexagonal.ms_foodcourt.domain.api.order;
 
+import com.hexagonal.ms_foodcourt.domain.model.response.MessageResult;
+
 public interface IOrderReadyServicePort {
 
-    void markOrderAsReady(Long idOrder);
+    MessageResult markOrderAsReady(Long idOrder);
 }

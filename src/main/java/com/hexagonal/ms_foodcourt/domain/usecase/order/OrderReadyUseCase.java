@@ -7,6 +7,7 @@ import com.hexagonal.ms_foodcourt.domain.exception.UserNotExistsException;
 import com.hexagonal.ms_foodcourt.domain.model.Order;
 import com.hexagonal.ms_foodcourt.domain.model.OrderReadyEvent;
 import com.hexagonal.ms_foodcourt.domain.model.User;
+import com.hexagonal.ms_foodcourt.domain.model.response.MessageResult;
 import com.hexagonal.ms_foodcourt.domain.spi.IOrderPersistencePort;
 import com.hexagonal.ms_foodcourt.domain.spi.IPinSecurityPort;
 import com.hexagonal.ms_foodcourt.domain.spi.ISqsSenderServicePort;
@@ -42,7 +43,7 @@ public class OrderReadyUseCase implements IOrderReadyServicePort {
     }
 
     @Override
-    public void markOrderAsReady(Long idOrder) {
+    public MessageResult markOrderAsReady(Long idOrder) {
         ValidateRequest.checkId(idOrder);
         Order order = orderPersistencePort.findById(idOrder).orElseThrow(OrderNotFoundException::new);
         if (!Objects.equals(order.getStatus(), EN_PREPARACION)) {
@@ -64,6 +65,8 @@ public class OrderReadyUseCase implements IOrderReadyServicePort {
         orderReadyEvent.setMessage(message);
         sqsSenderServicePort.sendMessage(orderReadyEvent);
         orderPersistencePort.saveOrder(order);
+        return new MessageResult("Order is ready");
+
     }
 
 }

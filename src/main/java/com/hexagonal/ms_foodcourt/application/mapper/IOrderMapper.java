@@ -1,9 +1,13 @@
 package com.hexagonal.ms_foodcourt.application.mapper;
 
 
+import com.hexagonal.ms_foodcourt.application.dto.request.DeliverOrderRequest;
 import com.hexagonal.ms_foodcourt.application.dto.request.OrderRequest;
+import com.hexagonal.ms_foodcourt.application.dto.response.MessageResponse;
 import com.hexagonal.ms_foodcourt.application.dto.response.OrderResponse;
+import com.hexagonal.ms_foodcourt.domain.model.DeliverOrder;
 import com.hexagonal.ms_foodcourt.domain.model.OrderReq;
+import com.hexagonal.ms_foodcourt.domain.model.response.MessageResult;
 import com.hexagonal.ms_foodcourt.domain.model.response.OrderResult;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -24,4 +28,9 @@ public interface IOrderMapper {
     OrderResponse toOrderResponse(OrderResult orderResult);
 
     List<OrderResponse> toOrderResponseList(List<OrderResult> orderResult);
+
+    MessageResponse toMessageResult(MessageResult messageResult);
+
+    DeliverOrder toDeliverOrder(DeliverOrderRequest deliverOrderRequest);
+
 }

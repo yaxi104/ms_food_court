@@ -13,8 +13,10 @@ public enum ExceptionResponse {
     USER_NOT_EXISTS("The user does not exist as an owner"),
     ORDER_NOT_STATUS_ASSIGNED("Order status is not PENDIENTE and cannot be assigned"),
     ORDER_NOT_STATUS_READY("Order must be in 'IN_PREPARATION' status before it can be marked as 'READY"),
+    ORDER_NOT_STATUS_DELIVERED("Order must be in 'LISTO' status before it can be marked as 'ENTREGADO"),
     CATEGORY_ALREADY_EXISTS("Category already exists"),
     SQS_SEND_ERROR("Ocurred error to send SQS"),
+    PIN_INCORRECT("The PIN you entered is not valid"),
     ORDER_NOT_FOUND("The dish not found");
 
     private String message;

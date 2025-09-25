@@ -2,6 +2,7 @@ package com.hexagonal.ms_foodcourt.util;
 
 import com.hexagonal.ms_foodcourt.application.dto.request.OrderDishRequest;
 import com.hexagonal.ms_foodcourt.application.dto.request.OrderRequest;
+import com.hexagonal.ms_foodcourt.domain.model.DeliverOrder;
 import com.hexagonal.ms_foodcourt.domain.model.Order;
 import com.hexagonal.ms_foodcourt.domain.model.OrderDish;
 import com.hexagonal.ms_foodcourt.domain.model.OrderReq;
@@ -58,6 +59,14 @@ public class TestDataOrderFactory {
         order.setDate(LocalDateTime.now());
         order.setStatus("PENDIENTE");
         order.setIdRestaurant(1L);
+        return order;
+    }
+
+
+    public static DeliverOrder mockDeliverOrder() {
+        DeliverOrder order = new DeliverOrder();
+        order.setOrderId(1L);
+        order.setPin("1234");
         return order;
     }
 

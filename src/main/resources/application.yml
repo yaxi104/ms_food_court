@@ -32,9 +32,9 @@ userservice:
 aws:
   region: us-east-1
   sqs:
-    queueUrl: {AWS_QUEUE_URL}
-  accessKey: {AWS_ACCESS_KEY}
-  secretKey: {AWS_SECRET_KEY}
+    queueUrl: { AWS_QUEUE_URL }
+  accessKey: { AWS_ACCESS_KEY }
+  secretKey: { AWS_SECRET_KEY }
 
 appDescription: "Plazoleta API"
 appVersion: "1.0.0"

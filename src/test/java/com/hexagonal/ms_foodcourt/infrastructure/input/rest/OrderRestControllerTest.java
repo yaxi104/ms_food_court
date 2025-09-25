@@ -3,6 +3,7 @@ package com.hexagonal.ms_foodcourt.infrastructure.input.rest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.hexagonal.ms_foodcourt.application.dto.request.DeliverOrderRequest;
 import com.hexagonal.ms_foodcourt.application.dto.request.OrderRequest;
 import com.hexagonal.ms_foodcourt.application.dto.request.PaginatedResponse;
 import com.hexagonal.ms_foodcourt.application.dto.response.OrderResponse;
@@ -116,7 +117,7 @@ class OrderRestControllerTest {
 
         mockMvc.perform(post("/api/v1/order/assign/{orderId}", orderId)
                         .with(authentication(new TestingAuthenticationToken("empleado", "password", "ROLE_EMPLEADO"))))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk());
 
         verify(orderHandler).assignOrderToEmployee(orderId);
     }
@@ -126,8 +127,25 @@ class OrderRestControllerTest {
         Long orderId = 1L;
 
         mockMvc.perform(post("/api/v1/order/ready/{orderId}", orderId))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk());
 
         verify(orderHandler).markOrderAsReady(orderId);
+    }
+
+    @Test
+    void markOrderAsDeliveredSuccess() throws Exception {
+        DeliverOrderRequest request = new DeliverOrderRequest();
+        request.setOrderId(1L);
+        request.setPin("ABC123");
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        mockMvc.perform(post("/api/v1/order/delivered")
+                        .with(authentication(new TestingAuthenticationToken("empleado", "password", "ROLE_EMPLEADO")))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(request)))
+                .andExpect(status().isOk());
+
+        verify(orderHandler).markOrderAsDelivered(any(DeliverOrderRequest.class));
     }
 }

@@ -9,7 +9,9 @@ import com.hexagonal.ms_foodcourt.domain.exception.DishNotRestaurantException;
 import com.hexagonal.ms_foodcourt.domain.exception.OrdenByIdClientExistsException;
 import com.hexagonal.ms_foodcourt.domain.exception.OrderNotFoundException;
 import com.hexagonal.ms_foodcourt.domain.exception.OrderStatusNotAssignedException;
+import com.hexagonal.ms_foodcourt.domain.exception.OrderStatusNotDelirevedException;
 import com.hexagonal.ms_foodcourt.domain.exception.OrderStatusNotReadyException;
+import com.hexagonal.ms_foodcourt.domain.exception.PinIncorrectException;
 import com.hexagonal.ms_foodcourt.domain.exception.RestaurantAlreadyExistsException;
 import com.hexagonal.ms_foodcourt.domain.exception.UserForbiddenException;
 import com.hexagonal.ms_foodcourt.domain.exception.UserNotExistsException;
@@ -111,5 +113,15 @@ public class ControllerAdvisor {
     @ExceptionHandler(SqsSendException.class)
     public ResponseEntity<Map<String, String>> handleSqsSendException(SqsSendException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(Collections.singletonMap(MESSAGE, ExceptionResponse.SQS_SEND_ERROR.getMessage()));
+    }
+
+    @ExceptionHandler(OrderStatusNotDelirevedException.class)
+    public ResponseEntity<Map<String, String>> handleOrderStatusNotDelirevedException(OrderStatusNotDelirevedException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(Collections.singletonMap(MESSAGE, ExceptionResponse.ORDER_NOT_STATUS_DELIVERED.getMessage()));
+    }
+
+    @ExceptionHandler(PinIncorrectException.class)
+    public ResponseEntity<Map<String, String>> handlePinIncorrectException(PinIncorrectException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(Collections.singletonMap(MESSAGE, ExceptionResponse.PIN_INCORRECT.getMessage()));
     }
 }

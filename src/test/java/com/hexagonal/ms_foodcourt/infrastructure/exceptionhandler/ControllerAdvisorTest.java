@@ -9,7 +9,9 @@ import com.hexagonal.ms_foodcourt.domain.exception.DishNotRestaurantException;
 import com.hexagonal.ms_foodcourt.domain.exception.OrdenByIdClientExistsException;
 import com.hexagonal.ms_foodcourt.domain.exception.OrderNotFoundException;
 import com.hexagonal.ms_foodcourt.domain.exception.OrderStatusNotAssignedException;
+import com.hexagonal.ms_foodcourt.domain.exception.OrderStatusNotDelirevedException;
 import com.hexagonal.ms_foodcourt.domain.exception.OrderStatusNotReadyException;
+import com.hexagonal.ms_foodcourt.domain.exception.PinIncorrectException;
 import com.hexagonal.ms_foodcourt.domain.exception.RestaurantAlreadyExistsException;
 import com.hexagonal.ms_foodcourt.domain.exception.UserForbiddenException;
 import com.hexagonal.ms_foodcourt.domain.exception.UserNotExistsException;
@@ -207,6 +209,28 @@ class ControllerAdvisorTest {
         assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
         assertNotNull(response.getBody());
         assertEquals(ExceptionResponse.SQS_SEND_ERROR.getMessage(), response.getBody().get(MESSAGE));
+    }
+
+    @Test
+    void handleOrderStatusNotDelirevedExceptionReturnsConflict() {
+        OrderStatusNotDelirevedException ex = mock(OrderStatusNotDelirevedException.class);
+
+        ResponseEntity<Map<String, String>> response = controllerAdvisor.handleOrderStatusNotDelirevedException(ex);
+
+        assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(ExceptionResponse.ORDER_NOT_STATUS_DELIVERED.getMessage(), response.getBody().get(MESSAGE));
+    }
+
+    @Test
+    void handlePinIncorrectExceptionReturnsConflict() {
+        PinIncorrectException ex = mock(PinIncorrectException.class);
+
+        ResponseEntity<Map<String, String>> response = controllerAdvisor.handlePinIncorrectException(ex);
+
+        assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(ExceptionResponse.PIN_INCORRECT.getMessage(), response.getBody().get(MESSAGE));
     }
 
 }

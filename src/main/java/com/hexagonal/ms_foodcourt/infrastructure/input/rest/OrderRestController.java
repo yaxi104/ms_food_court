@@ -1,8 +1,10 @@
 package com.hexagonal.ms_foodcourt.infrastructure.input.rest;
 
 
+import com.hexagonal.ms_foodcourt.application.dto.request.DeliverOrderRequest;
 import com.hexagonal.ms_foodcourt.application.dto.request.OrderRequest;
 import com.hexagonal.ms_foodcourt.application.dto.request.PaginatedResponse;
+import com.hexagonal.ms_foodcourt.application.dto.response.MessageResponse;
 import com.hexagonal.ms_foodcourt.application.dto.response.OrderResponse;
 import com.hexagonal.ms_foodcourt.application.handler.IOrderHandler;
 import io.swagger.v3.oas.annotations.Operation;
@@ -192,10 +194,10 @@ public class OrderRestController {
                             content = @Content(
                                     mediaType = "application/json",
                                     examples = @ExampleObject(
-                                            name = "Bad Request Example",
+                                            name = "Order assign Example",
                                             value = """
                                                     {
-                                                        "Message": "The request contains invalid data. Please check the submitted fields and try again"
+                                                        "message": "Order has been successfully assigned"
                                                     }
                                                     """
                                     )
@@ -208,7 +210,7 @@ public class OrderRestController {
                                             name = "Forbidden Example",
                                             value = """
                                                     {
-                                                        "Message": "You do not have permission to assign this order"
+                                                        "message": "You do not have permission to assign this order"
                                                     }
                                                     """
                                     )
@@ -231,16 +233,27 @@ public class OrderRestController {
     )
     @PreAuthorize("hasRole('EMPLEADO')")
     @PostMapping("/assign/{orderId}")
-    public ResponseEntity<Void> assignOrderToEmployee(@PathVariable Long orderId) {
-        orderHandler.assignOrderToEmployee(orderId);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<MessageResponse> assignOrderToEmployee(@PathVariable Long orderId) {
+        MessageResponse messageResponse = orderHandler.assignOrderToEmployee(orderId);
+        return ResponseEntity.ok(messageResponse);
     }
 
     @Operation(
             summary = "Mark order as 'LISTO'",
             description = "Marks the order status as 'LISTO' and triggers notification to the client. Only valid if order exists.",
             responses = {
-                    @ApiResponse(responseCode = "204", description = "Order successfully marked as LISTO"),
+                    @ApiResponse(responseCode = "200", description = "Order successfully marked as LISTO", content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    name = "Order Ready Example",
+                                    value = """
+                                                    {
+                                                        "message": "Order has been successfully assigned"
+                                                    }
+                                            """
+                            )
+                    )
+                    ),
                     @ApiResponse(responseCode = "400", description = "Invalid request",
                             content = @Content(
                                     mediaType = "application/json",
@@ -284,8 +297,73 @@ public class OrderRestController {
     )
     @PreAuthorize("hasRole('EMPLEADO')")
     @PostMapping("/ready/{orderId}")
-    public ResponseEntity<Void> markOrderAsReady(@PathVariable Long orderId) {
-        orderHandler.markOrderAsReady(orderId);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<MessageResponse> markOrderAsReady(@PathVariable Long orderId) {
+        MessageResponse messageResponse = orderHandler.markOrderAsReady(orderId);
+        return ResponseEntity.ok(messageResponse);
+    }
+
+    @Operation(
+            summary = "Mark order as 'ENTREGADO'",
+            description = "Marks the order status as 'ENTREGADO' if the order is in 'LISTO' state and the correct PIN is provided. Only employees of the restaurant can perform this action.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Order successfully marked as ENTREGADO",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(
+                                            name = "Success Example",
+                                            value = """
+                                                    {
+                                                        "message": "Your order has been delivered"
+                                                    }
+                                                    """
+                                    )
+                            )
+                    ),
+                    @ApiResponse(responseCode = "403", description = "Forbidden",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(
+                                            name = "Forbidden Example",
+                                            value = """
+                                                    {
+                                                        "message": "You do not have permission to deliver this order"
+                                                    }
+                                                    """
+                                    )
+                            )
+                    ),
+                    @ApiResponse(responseCode = "404", description = "Order not found",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(
+                                            name = "Not Found Example",
+                                            value = """
+                                                    {
+                                                        "message": "Order not found"
+                                                    }
+                                                    """
+                                    )
+                            )
+                    ),
+                    @ApiResponse(responseCode = "409", description = "Conflict - Invalid order status",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(
+                                            name = "Conflict Example",
+                                            value = """
+                                                    {
+                                                        "message": "Only orders in 'LISTO' state can be marked as delivered"
+                                                    }
+                                                    """
+                                    )
+                            )
+                    )
+            }
+    )
+    @PreAuthorize("hasRole('EMPLEADO')")
+    @PostMapping("/delivered")
+    public ResponseEntity<MessageResponse> markOrderAsDelivered(@RequestBody DeliverOrderRequest deliverOrderRequest) {
+        MessageResponse messageResponse = orderHandler.markOrderAsDelivered(deliverOrderRequest);
+        return ResponseEntity.ok(messageResponse);
     }
 }

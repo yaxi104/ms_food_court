@@ -1,13 +1,16 @@
 package com.hexagonal.ms_foodcourt.application.handler.impl;
 
+import com.hexagonal.ms_foodcourt.application.dto.request.DeliverOrderRequest;
 import com.hexagonal.ms_foodcourt.application.dto.request.OrderRequest;
 import com.hexagonal.ms_foodcourt.application.dto.request.PaginatedResponse;
 import com.hexagonal.ms_foodcourt.application.dto.response.OrderResponse;
 import com.hexagonal.ms_foodcourt.application.mapper.IOrderMapper;
 import com.hexagonal.ms_foodcourt.domain.api.order.IOrderAssignServicePort;
+import com.hexagonal.ms_foodcourt.domain.api.order.IOrderDeliveredServicePort;
 import com.hexagonal.ms_foodcourt.domain.api.order.IOrderGetListServicePort;
 import com.hexagonal.ms_foodcourt.domain.api.order.IOrderReadyServicePort;
 import com.hexagonal.ms_foodcourt.domain.api.order.IOrderSaveServicePort;
+import com.hexagonal.ms_foodcourt.domain.model.DeliverOrder;
 import com.hexagonal.ms_foodcourt.domain.model.OrderReq;
 import com.hexagonal.ms_foodcourt.domain.model.response.OrderResult;
 import com.hexagonal.ms_foodcourt.domain.model.response.PageResult;
@@ -41,6 +44,9 @@ class OrderHandlerTest {
 
     @Mock
     private IOrderReadyServicePort orderReadyServicePort;
+
+    @Mock
+    private IOrderDeliveredServicePort orderDeliveredServicePort;
 
     @Mock
     private IOrderMapper orderRequestMapper;
@@ -122,6 +128,19 @@ class OrderHandlerTest {
         orderHandler.markOrderAsReady(orderId);
 
         verify(orderReadyServicePort, times(1)).markOrderAsReady(orderId);
+    }
+
+    @Test
+    void markOrderAsDeliveredTest() {
+        DeliverOrderRequest request = new DeliverOrderRequest();
+        request.setOrderId(1L);
+        request.setPin("123456");
+
+        DeliverOrder deliverOrder = new DeliverOrder(1L, "123456");
+
+        when(orderRequestMapper.toDeliverOrder(request)).thenReturn(deliverOrder);
+        orderHandler.markOrderAsDelivered(request);
+        verify(orderDeliveredServicePort, times(1)).markOrderAsDelivered(deliverOrder);
     }
 
 }

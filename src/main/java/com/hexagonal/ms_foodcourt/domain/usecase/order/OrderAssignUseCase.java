@@ -3,9 +3,11 @@ package com.hexagonal.ms_foodcourt.domain.usecase.order;
 import com.hexagonal.ms_foodcourt.domain.api.order.IOrderAssignServicePort;
 import com.hexagonal.ms_foodcourt.domain.exception.OrderNotFoundException;
 import com.hexagonal.ms_foodcourt.domain.exception.OrderStatusNotAssignedException;
+import com.hexagonal.ms_foodcourt.domain.exception.UserForbiddenException;
 import com.hexagonal.ms_foodcourt.domain.exception.UserNotExistsException;
 import com.hexagonal.ms_foodcourt.domain.model.Order;
 import com.hexagonal.ms_foodcourt.domain.model.User;
+import com.hexagonal.ms_foodcourt.domain.model.response.MessageResult;
 import com.hexagonal.ms_foodcourt.domain.spi.IOrderPersistencePort;
 import com.hexagonal.ms_foodcourt.domain.spi.IUserFeignPort;
 import com.hexagonal.ms_foodcourt.domain.spi.IUserSessionPort;
@@ -32,10 +34,15 @@ public class OrderAssignUseCase implements IOrderAssignServicePort {
     }
 
     @Override
-    public void assignOrderToEmployee(Long orderId) {
+    public MessageResult assignOrderToEmployee(Long orderId) {
         ValidateRequest.checkId(orderId);
         User userEmployee = userFeignPort.getUserByEmail(userSessionPort.getCurrentUserEmail()).orElseThrow(UserNotExistsException::new);
+
         Order order = orderPersistencePort.findById(orderId).orElseThrow(OrderNotFoundException::new);
+
+        if (!Objects.equals(userEmployee.getRestaurantId(), order.getIdRestaurant())) {
+            throw new UserForbiddenException();
+        }
 
         if (!Objects.equals(order.getStatus(), PENDIENTE)) {
             throw new OrderStatusNotAssignedException();
@@ -44,6 +51,7 @@ public class OrderAssignUseCase implements IOrderAssignServicePort {
         order.setStatus(EN_PREPARACION);
         order.setDate(DateHelper.dateBogota());
         orderPersistencePort.saveOrder(order);
+        return new MessageResult("Order has been successfully assigned");
     }
 
 }

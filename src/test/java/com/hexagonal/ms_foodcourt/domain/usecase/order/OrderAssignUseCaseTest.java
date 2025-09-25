@@ -3,6 +3,7 @@ package com.hexagonal.ms_foodcourt.domain.usecase.order;
 import com.hexagonal.ms_foodcourt.domain.exception.BadRequestException;
 import com.hexagonal.ms_foodcourt.domain.exception.OrderNotFoundException;
 import com.hexagonal.ms_foodcourt.domain.exception.OrderStatusNotAssignedException;
+import com.hexagonal.ms_foodcourt.domain.exception.UserForbiddenException;
 import com.hexagonal.ms_foodcourt.domain.exception.UserNotExistsException;
 import com.hexagonal.ms_foodcourt.domain.model.Order;
 import com.hexagonal.ms_foodcourt.domain.model.User;
@@ -116,6 +117,27 @@ class OrderAssignUseCaseTest {
         when(orderPersistencePort.findById(orderId)).thenReturn(Optional.of(order));
 
         assertThrows(OrderStatusNotAssignedException.class, () -> orderAssignUseCase.assignOrderToEmployee(orderId));
+    }
+
+    @Test
+    void assignOrderToEmployeeValidateEmployeeTest() {
+        Long orderId = 1L;
+
+        User userEmployee = new User();
+        userEmployee.setId(10L);
+        userEmployee.setRestaurantId(1L);
+        userEmployee.setEmail(EMAIL_TEST);
+
+        Order order = new Order();
+        order.setId(orderId);
+        order.setStatus(EN_PREPARACION);
+        userEmployee.setRestaurantId(2L);
+
+        when(userSessionPort.getCurrentUserEmail()).thenReturn(EMAIL_TEST);
+        when(userFeignPort.getUserByEmail(EMAIL_TEST)).thenReturn(Optional.of(userEmployee));
+        when(orderPersistencePort.findById(orderId)).thenReturn(Optional.of(order));
+
+        assertThrows(UserForbiddenException.class, () -> orderAssignUseCase.assignOrderToEmployee(orderId));
     }
 
 }
