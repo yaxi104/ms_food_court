@@ -8,6 +8,7 @@ import com.hexagonal.ms_foodcourt.application.dto.response.OrderResponse;
 import com.hexagonal.ms_foodcourt.application.handler.IOrderHandler;
 import com.hexagonal.ms_foodcourt.application.mapper.IOrderMapper;
 import com.hexagonal.ms_foodcourt.domain.api.order.IOrderAssignServicePort;
+import com.hexagonal.ms_foodcourt.domain.api.order.IOrderCanceledServicePort;
 import com.hexagonal.ms_foodcourt.domain.api.order.IOrderDeliveredServicePort;
 import com.hexagonal.ms_foodcourt.domain.api.order.IOrderGetListServicePort;
 import com.hexagonal.ms_foodcourt.domain.api.order.IOrderReadyServicePort;
@@ -31,6 +32,7 @@ public class OrderHandler implements IOrderHandler {
     private final IOrderReadyServicePort orderReadyServicePort;
     private final IOrderAssignServicePort orderAssignServicePort;
     private final IOrderDeliveredServicePort orderDeliveredServicePort;
+    private final IOrderCanceledServicePort orderCenceledServicePort;
     private final IOrderMapper orderRequestMapper;
 
     @Override
@@ -67,6 +69,12 @@ public class OrderHandler implements IOrderHandler {
     @Override
     public MessageResponse markOrderAsDelivered(DeliverOrderRequest deliverOrderRequest) {
         MessageResult messageResult = orderDeliveredServicePort.markOrderAsDelivered(orderRequestMapper.toDeliverOrder(deliverOrderRequest));
+        return orderRequestMapper.toMessageResult(messageResult);
+    }
+
+    @Override
+    public MessageResponse markOrderAsCanceled(Long orderId) {
+        MessageResult messageResult = orderCenceledServicePort.markOrderAsCanceled(orderId);
         return orderRequestMapper.toMessageResult(messageResult);
     }
 

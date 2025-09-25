@@ -5,6 +5,7 @@ import com.hexagonal.ms_foodcourt.domain.api.ICategoryServicePort;
 import com.hexagonal.ms_foodcourt.domain.api.IDishServicePort;
 import com.hexagonal.ms_foodcourt.domain.api.IRestaurantServicePort;
 import com.hexagonal.ms_foodcourt.domain.api.order.IOrderAssignServicePort;
+import com.hexagonal.ms_foodcourt.domain.api.order.IOrderCanceledServicePort;
 import com.hexagonal.ms_foodcourt.domain.api.order.IOrderDeliveredServicePort;
 import com.hexagonal.ms_foodcourt.domain.api.order.IOrderGetListServicePort;
 import com.hexagonal.ms_foodcourt.domain.api.order.IOrderReadyServicePort;
@@ -22,6 +23,7 @@ import com.hexagonal.ms_foodcourt.domain.usecase.CategoryUseCase;
 import com.hexagonal.ms_foodcourt.domain.usecase.DishUseCase;
 import com.hexagonal.ms_foodcourt.domain.usecase.RestaurantUseCase;
 import com.hexagonal.ms_foodcourt.domain.usecase.order.OrderAssignUseCase;
+import com.hexagonal.ms_foodcourt.domain.usecase.order.OrderCanceledUseCase;
 import com.hexagonal.ms_foodcourt.domain.usecase.order.OrderDeliveredUseCase;
 import com.hexagonal.ms_foodcourt.domain.usecase.order.OrderGetListUseCase;
 import com.hexagonal.ms_foodcourt.domain.usecase.order.OrderReadyUseCase;
@@ -157,5 +159,10 @@ public class BeanConfiguration {
     @Bean
     public IOrderDeliveredServicePort orderDeliveredServicePort() {
         return new OrderDeliveredUseCase(orderPersistencePort(), userFeignPort(), userSessionPort(), pinSecurityPort());
+    }
+
+    @Bean
+    public IOrderCanceledServicePort orderCanceledServicePort() {
+        return new OrderCanceledUseCase(orderPersistencePort(), userFeignPort(), userSessionPort());
     }
 }

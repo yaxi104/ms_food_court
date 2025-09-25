@@ -6,6 +6,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.hexagonal.ms_foodcourt.application.dto.request.DeliverOrderRequest;
 import com.hexagonal.ms_foodcourt.application.dto.request.OrderRequest;
 import com.hexagonal.ms_foodcourt.application.dto.request.PaginatedResponse;
+import com.hexagonal.ms_foodcourt.application.dto.response.MessageResponse;
 import com.hexagonal.ms_foodcourt.application.dto.response.OrderResponse;
 import com.hexagonal.ms_foodcourt.application.handler.IOrderHandler;
 import com.hexagonal.ms_foodcourt.infrastructure.exceptionhandler.ControllerAdvisor;
@@ -31,6 +32,8 @@ import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
@@ -147,5 +150,21 @@ class OrderRestControllerTest {
                 .andExpect(status().isOk());
 
         verify(orderHandler).markOrderAsDelivered(any(DeliverOrderRequest.class));
+    }
+
+    @Test
+    void markOrderAsCanceledSuccess() throws Exception {
+        Long orderId = 1L;
+        MessageResponse expectedResponse = new MessageResponse("Your order has been canceled");
+
+        when(orderHandler.markOrderAsCanceled(orderId)).thenReturn(expectedResponse);
+
+        mockMvc.perform(post("/api/v1/order/canceled/{orderId}", orderId)
+                        .with(authentication(new TestingAuthenticationToken("cliente", "password", "ROLE_CLIENTE"))))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.message").value("Your order has been canceled"));
+
+        verify(orderHandler).markOrderAsCanceled(orderId);
     }
 }

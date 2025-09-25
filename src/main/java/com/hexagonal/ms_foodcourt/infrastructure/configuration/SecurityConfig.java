@@ -60,6 +60,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/v1/category/owner").hasRole(ROLE_PROPIETARIO)
                         .requestMatchers(HttpMethod.GET, "/api/v1/category/all**").hasRole(ROLE_PROPIETARIO)
                         .requestMatchers(HttpMethod.POST, "/api/v1/order/delivered").hasRole(ROLE_EMPLEADO)
+                        .requestMatchers(HttpMethod.POST, "/api/v1/order/canceled/**").hasRole(ROLE_CLIENTE)
 
                         .anyRequest().authenticated()
                 )

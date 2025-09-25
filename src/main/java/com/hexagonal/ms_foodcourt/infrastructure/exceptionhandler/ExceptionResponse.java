@@ -17,6 +17,7 @@ public enum ExceptionResponse {
     CATEGORY_ALREADY_EXISTS("Category already exists"),
     SQS_SEND_ERROR("Ocurred error to send SQS"),
     PIN_INCORRECT("The PIN you entered is not valid"),
+    ORDER_NOT_STATUS_CANCELED("We're sorry, your order is already being prepared and cannot be canceled"),
     ORDER_NOT_FOUND("The dish not found");
 
     private String message;

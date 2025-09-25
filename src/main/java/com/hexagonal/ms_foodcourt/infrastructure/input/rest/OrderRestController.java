@@ -366,4 +366,69 @@ public class OrderRestController {
         MessageResponse messageResponse = orderHandler.markOrderAsDelivered(deliverOrderRequest);
         return ResponseEntity.ok(messageResponse);
     }
+
+    @Operation(
+            summary = "Mark order as 'CANCELADO'",
+            description = "Marks the order status as 'CANCELADO' if the order is in 'PENDIENTE' state. Only customer can perform this action.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Order successfully marked as CANCELADO",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(
+                                            name = "Success Example",
+                                            value = """
+                                                    {
+                                                        "message": "Your order has been canceled"
+                                                    }
+                                                    """
+                                    )
+                            )
+                    ),
+                    @ApiResponse(responseCode = "403", description = "Forbidden",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(
+                                            name = "Forbidden Example",
+                                            value = """
+                                                    {
+                                                        "message": "You do not have permission to deliver this order"
+                                                    }
+                                                    """
+                                    )
+                            )
+                    ),
+                    @ApiResponse(responseCode = "404", description = "Order not found",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(
+                                            name = "Not Found Example",
+                                            value = """
+                                                    {
+                                                        "message": "Order not found"
+                                                    }
+                                                    """
+                                    )
+                            )
+                    ),
+                    @ApiResponse(responseCode = "409", description = "Conflict - Invalid order status",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(
+                                            name = "Conflict Example",
+                                            value = """
+                                                    {
+                                                        "message": "Only orders in 'LISTO' state can be marked as delivered"
+                                                    }
+                                                    """
+                                    )
+                            )
+                    )
+            }
+    )
+    @PreAuthorize("hasRole('CLIENTE')")
+    @PostMapping("/canceled/{orderId}")
+    public ResponseEntity<MessageResponse> markOrderAsCanceled(@PathVariable Long orderId) {
+        MessageResponse messageResponse = orderHandler.markOrderAsCanceled(orderId);
+        return ResponseEntity.ok(messageResponse);
+    }
 }

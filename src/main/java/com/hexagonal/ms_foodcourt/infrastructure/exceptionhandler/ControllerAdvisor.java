@@ -9,6 +9,7 @@ import com.hexagonal.ms_foodcourt.domain.exception.DishNotRestaurantException;
 import com.hexagonal.ms_foodcourt.domain.exception.OrdenByIdClientExistsException;
 import com.hexagonal.ms_foodcourt.domain.exception.OrderNotFoundException;
 import com.hexagonal.ms_foodcourt.domain.exception.OrderStatusNotAssignedException;
+import com.hexagonal.ms_foodcourt.domain.exception.OrderStatusNotCanceledException;
 import com.hexagonal.ms_foodcourt.domain.exception.OrderStatusNotDelirevedException;
 import com.hexagonal.ms_foodcourt.domain.exception.OrderStatusNotReadyException;
 import com.hexagonal.ms_foodcourt.domain.exception.PinIncorrectException;
@@ -123,5 +124,10 @@ public class ControllerAdvisor {
     @ExceptionHandler(PinIncorrectException.class)
     public ResponseEntity<Map<String, String>> handlePinIncorrectException(PinIncorrectException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(Collections.singletonMap(MESSAGE, ExceptionResponse.PIN_INCORRECT.getMessage()));
+    }
+
+    @ExceptionHandler(OrderStatusNotCanceledException.class)
+    public ResponseEntity<Map<String, String>> handleOrderStatusNotCanceledException(OrderStatusNotCanceledException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(Collections.singletonMap(MESSAGE, ExceptionResponse.ORDER_NOT_STATUS_CANCELED.getMessage()));
     }
 }

@@ -3,15 +3,18 @@ package com.hexagonal.ms_foodcourt.application.handler.impl;
 import com.hexagonal.ms_foodcourt.application.dto.request.DeliverOrderRequest;
 import com.hexagonal.ms_foodcourt.application.dto.request.OrderRequest;
 import com.hexagonal.ms_foodcourt.application.dto.request.PaginatedResponse;
+import com.hexagonal.ms_foodcourt.application.dto.response.MessageResponse;
 import com.hexagonal.ms_foodcourt.application.dto.response.OrderResponse;
 import com.hexagonal.ms_foodcourt.application.mapper.IOrderMapper;
 import com.hexagonal.ms_foodcourt.domain.api.order.IOrderAssignServicePort;
+import com.hexagonal.ms_foodcourt.domain.api.order.IOrderCanceledServicePort;
 import com.hexagonal.ms_foodcourt.domain.api.order.IOrderDeliveredServicePort;
 import com.hexagonal.ms_foodcourt.domain.api.order.IOrderGetListServicePort;
 import com.hexagonal.ms_foodcourt.domain.api.order.IOrderReadyServicePort;
 import com.hexagonal.ms_foodcourt.domain.api.order.IOrderSaveServicePort;
 import com.hexagonal.ms_foodcourt.domain.model.DeliverOrder;
 import com.hexagonal.ms_foodcourt.domain.model.OrderReq;
+import com.hexagonal.ms_foodcourt.domain.model.response.MessageResult;
 import com.hexagonal.ms_foodcourt.domain.model.response.OrderResult;
 import com.hexagonal.ms_foodcourt.domain.model.response.PageResult;
 import com.hexagonal.ms_foodcourt.util.TestDataOrderFactory;
@@ -47,6 +50,9 @@ class OrderHandlerTest {
 
     @Mock
     private IOrderDeliveredServicePort orderDeliveredServicePort;
+
+    @Mock
+    private IOrderCanceledServicePort orderCanceledServicePort;
 
     @Mock
     private IOrderMapper orderRequestMapper;
@@ -143,4 +149,21 @@ class OrderHandlerTest {
         verify(orderDeliveredServicePort, times(1)).markOrderAsDelivered(deliverOrder);
     }
 
+
+    @Test
+    void shouldReturnMessageResponseWhenOrderIsCanceled() {
+        Long orderId = 1L;
+
+        MessageResult messageResult = new MessageResult("Your order has been canceled");
+        MessageResponse expectedResponse = new MessageResponse("Your order has been canceled");
+
+        when(orderCanceledServicePort.markOrderAsCanceled(orderId)).thenReturn(messageResult);
+        when(orderRequestMapper.toMessageResult(messageResult)).thenReturn(expectedResponse);
+
+        MessageResponse actualResponse = orderHandler.markOrderAsCanceled(orderId);
+
+        assertEquals("Your order has been canceled", actualResponse.getMessage());
+        verify(orderCanceledServicePort).markOrderAsCanceled(orderId);
+        verify(orderRequestMapper).toMessageResult(messageResult);
+    }
 }

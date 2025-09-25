@@ -19,4 +19,6 @@ public interface IOrderHandler {
 
     MessageResponse markOrderAsDelivered(DeliverOrderRequest deliverOrderRequest);
 
+    MessageResponse markOrderAsCanceled(Long orderId);
+
 }
