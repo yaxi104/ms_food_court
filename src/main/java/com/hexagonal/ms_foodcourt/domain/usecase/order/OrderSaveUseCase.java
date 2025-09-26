@@ -8,13 +8,16 @@ import com.hexagonal.ms_foodcourt.domain.exception.UserNotExistsException;
 import com.hexagonal.ms_foodcourt.domain.model.Order;
 import com.hexagonal.ms_foodcourt.domain.model.OrderDish;
 import com.hexagonal.ms_foodcourt.domain.model.OrderReq;
+import com.hexagonal.ms_foodcourt.domain.model.Traceability;
 import com.hexagonal.ms_foodcourt.domain.model.User;
 import com.hexagonal.ms_foodcourt.domain.spi.IDishPersistencePort;
 import com.hexagonal.ms_foodcourt.domain.spi.IOrderDishPersistencePort;
 import com.hexagonal.ms_foodcourt.domain.spi.IOrderPersistencePort;
+import com.hexagonal.ms_foodcourt.domain.spi.ITraceFeignPort;
 import com.hexagonal.ms_foodcourt.domain.spi.IUserFeignPort;
 import com.hexagonal.ms_foodcourt.domain.spi.IUserSessionPort;
 import com.hexagonal.ms_foodcourt.domain.utils.DateHelper;
+import com.hexagonal.ms_foodcourt.domain.utils.TraceabilityHelper;
 import com.hexagonal.ms_foodcourt.domain.utils.ValidateRequest;
 
 import java.util.List;
@@ -30,17 +33,20 @@ public class OrderSaveUseCase implements IOrderSaveServicePort {
     private final IOrderDishPersistencePort orderDishPersistencePort;
     private final IUserFeignPort userFeignPort;
     private final IUserSessionPort userSessionPort;
+    private final ITraceFeignPort traceFeignPort;
 
     public OrderSaveUseCase(IDishPersistencePort dishPersistencePort,
                             IOrderPersistencePort orderPersistencePort,
                             IOrderDishPersistencePort orderDishPersistencePort,
                             IUserFeignPort userFeignPort,
-                            IUserSessionPort userSessionPort) {
+                            IUserSessionPort userSessionPort,
+                            ITraceFeignPort traceFeignPort) {
         this.dishPersistencePort = dishPersistencePort;
         this.orderPersistencePort = orderPersistencePort;
         this.orderDishPersistencePort = orderDishPersistencePort;
         this.userFeignPort = userFeignPort;
         this.userSessionPort = userSessionPort;
+        this.traceFeignPort = traceFeignPort;
     }
 
     @Override
@@ -77,6 +83,10 @@ public class OrderSaveUseCase implements IOrderSaveServicePort {
         orderDishList.forEach(orderDish -> orderDish.setIdOrder(orderId));
 
         orderDishPersistencePort.saveAllOrderDish(orderDishList);
+        order.setId(orderId);
+
+        Traceability traceability = TraceabilityHelper.createTrace(order, null, null);
+        traceFeignPort.saveTraceability(traceability);
     }
 
 }

@@ -3,9 +3,9 @@ package com.hexagonal.ms_foodcourt.infrastructure.input.rest;
 
 import com.hexagonal.ms_foodcourt.application.dto.request.DeliverOrderRequest;
 import com.hexagonal.ms_foodcourt.application.dto.request.OrderRequest;
-import com.hexagonal.ms_foodcourt.application.dto.response.PaginatedResponse;
 import com.hexagonal.ms_foodcourt.application.dto.response.MessageResponse;
 import com.hexagonal.ms_foodcourt.application.dto.response.OrderResponse;
+import com.hexagonal.ms_foodcourt.application.dto.response.PaginatedResponse;
 import com.hexagonal.ms_foodcourt.application.handler.IOrderHandler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -13,10 +13,12 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/order")
 @RequiredArgsConstructor
+@Validated
 @Tag(name = "Order", description = "Operations related to order")
 public class OrderRestController {
 
@@ -85,7 +88,7 @@ public class OrderRestController {
     )
     @PostMapping("/customer")
     @PreAuthorize("hasRole('CLIENTE')")
-    public ResponseEntity<Void> saveDish(@RequestBody OrderRequest orderRequest) {
+    public ResponseEntity<Void> saveDish(@Valid @RequestBody OrderRequest orderRequest) {
         orderHandler.saveOrder(orderRequest);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -362,7 +365,7 @@ public class OrderRestController {
     )
     @PreAuthorize("hasRole('EMPLEADO')")
     @PostMapping("/delivered")
-    public ResponseEntity<MessageResponse> markOrderAsDelivered(@RequestBody DeliverOrderRequest deliverOrderRequest) {
+    public ResponseEntity<MessageResponse> markOrderAsDelivered(@Valid @RequestBody DeliverOrderRequest deliverOrderRequest) {
         MessageResponse messageResponse = orderHandler.markOrderAsDelivered(deliverOrderRequest);
         return ResponseEntity.ok(messageResponse);
     }

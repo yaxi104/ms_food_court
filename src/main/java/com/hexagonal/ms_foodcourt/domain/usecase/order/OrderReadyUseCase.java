@@ -6,14 +6,17 @@ import com.hexagonal.ms_foodcourt.domain.exception.OrderStatusNotReadyException;
 import com.hexagonal.ms_foodcourt.domain.exception.UserNotExistsException;
 import com.hexagonal.ms_foodcourt.domain.model.Order;
 import com.hexagonal.ms_foodcourt.domain.model.OrderReadyEvent;
+import com.hexagonal.ms_foodcourt.domain.model.Traceability;
 import com.hexagonal.ms_foodcourt.domain.model.User;
 import com.hexagonal.ms_foodcourt.domain.model.response.MessageResult;
 import com.hexagonal.ms_foodcourt.domain.spi.IOrderPersistencePort;
 import com.hexagonal.ms_foodcourt.domain.spi.IPinSecurityPort;
 import com.hexagonal.ms_foodcourt.domain.spi.ISqsSenderServicePort;
+import com.hexagonal.ms_foodcourt.domain.spi.ITraceFeignPort;
 import com.hexagonal.ms_foodcourt.domain.spi.IUserFeignPort;
 import com.hexagonal.ms_foodcourt.domain.spi.IUserSessionPort;
 import com.hexagonal.ms_foodcourt.domain.utils.DateHelper;
+import com.hexagonal.ms_foodcourt.domain.utils.TraceabilityHelper;
 import com.hexagonal.ms_foodcourt.domain.utils.UserValidate;
 import com.hexagonal.ms_foodcourt.domain.utils.ValidateRequest;
 
@@ -29,23 +32,28 @@ public class OrderReadyUseCase implements IOrderReadyServicePort {
     private final IUserSessionPort userSessionPort;
     private final IPinSecurityPort pinSecurityPort;
     private final ISqsSenderServicePort sqsSenderServicePort;
+    private final ITraceFeignPort traceFeignPort;
 
     public OrderReadyUseCase(IOrderPersistencePort orderPersistencePort,
                              IUserFeignPort userFeignPort,
                              IUserSessionPort userSessionPort,
                              IPinSecurityPort pinSecurityPort,
-                             ISqsSenderServicePort sqsSenderServicePort) {
+                             ISqsSenderServicePort sqsSenderServicePort,
+                             ITraceFeignPort traceFeignPort) {
         this.orderPersistencePort = orderPersistencePort;
         this.userFeignPort = userFeignPort;
         this.userSessionPort = userSessionPort;
         this.pinSecurityPort = pinSecurityPort;
         this.sqsSenderServicePort = sqsSenderServicePort;
+        this.traceFeignPort = traceFeignPort;
+
     }
 
     @Override
     public MessageResult markOrderAsReady(Long idOrder) {
         ValidateRequest.checkId(idOrder);
         Order order = orderPersistencePort.findById(idOrder).orElseThrow(OrderNotFoundException::new);
+        String statusPrevious = order.getStatus();
         if (!Objects.equals(order.getStatus(), EN_PREPARACION)) {
             throw new OrderStatusNotReadyException();
         }
@@ -63,8 +71,10 @@ public class OrderReadyUseCase implements IOrderReadyServicePort {
         OrderReadyEvent orderReadyEvent = new OrderReadyEvent();
         orderReadyEvent.setPhoneNumber(userCustomer.getPhoneNumber());
         orderReadyEvent.setMessage(message);
-        sqsSenderServicePort.sendMessage(orderReadyEvent);
+//        sqsSenderServicePort.sendMessage(orderReadyEvent);
         orderPersistencePort.saveOrder(order);
+        Traceability traceability = TraceabilityHelper.createTrace(order, statusPrevious, userFeignPort);
+        traceFeignPort.saveTraceability(traceability);
         return new MessageResult("Order is ready");
 
     }

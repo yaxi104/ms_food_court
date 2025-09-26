@@ -4,8 +4,8 @@ package com.hexagonal.ms_foodcourt.infrastructure.input.rest;
 import com.hexagonal.ms_foodcourt.application.dto.request.DishRequest;
 import com.hexagonal.ms_foodcourt.application.dto.request.DishToggleStatusRequest;
 import com.hexagonal.ms_foodcourt.application.dto.request.DishUpdateRequest;
-import com.hexagonal.ms_foodcourt.application.dto.response.PaginatedResponse;
 import com.hexagonal.ms_foodcourt.application.dto.response.DishResponse;
+import com.hexagonal.ms_foodcourt.application.dto.response.PaginatedResponse;
 import com.hexagonal.ms_foodcourt.application.handler.IDishHandler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/dish")
 @RequiredArgsConstructor
+@Validated
 @Tag(name = "Dish", description = "Operations related to dish the menu")
 public class DishRestController {
 
@@ -201,7 +203,7 @@ public class DishRestController {
     )
     @PatchMapping("/toggle/status")
     @PreAuthorize("hasRole('PROPIETARIO')")
-    public ResponseEntity<Void> toggleDishStatus(@RequestBody DishToggleStatusRequest dishToggleStatusRequest) {
+    public ResponseEntity<Void> toggleDishStatus(@Valid @RequestBody DishToggleStatusRequest dishToggleStatusRequest) {
         dishHandler.toggleDishStatus(dishToggleStatusRequest);
         return ResponseEntity.noContent().build();
     }

@@ -1,7 +1,7 @@
 package com.hexagonal.ms_foodcourt.infrastructure.input.rest;
 
-import com.hexagonal.ms_foodcourt.application.dto.response.PaginatedResponse;
 import com.hexagonal.ms_foodcourt.application.dto.request.RestaurantRequest;
+import com.hexagonal.ms_foodcourt.application.dto.response.PaginatedResponse;
 import com.hexagonal.ms_foodcourt.application.dto.response.RestaurantResponse;
 import com.hexagonal.ms_foodcourt.application.handler.IRestaurantHandler;
 import io.swagger.v3.oas.annotations.Operation;
@@ -10,10 +10,12 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/restaurant")
 @RequiredArgsConstructor
+@Validated
 @Tag(name = "Restaurant", description = "Operations related to restaurants")
 public class RestaurantRestController {
 
@@ -81,7 +84,7 @@ public class RestaurantRestController {
     )
     @PostMapping("/admin")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> saveRestaurant(@RequestBody RestaurantRequest restaurantRequest) {
+    public ResponseEntity<Void> saveRestaurant(@Valid @RequestBody RestaurantRequest restaurantRequest) {
         restaurantHandler.saveRestaurant(restaurantRequest);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }

@@ -1,8 +1,8 @@
 package com.hexagonal.ms_foodcourt.infrastructure.input.rest;
 
 import com.hexagonal.ms_foodcourt.application.dto.request.CategoryRequest;
-import com.hexagonal.ms_foodcourt.application.dto.response.PaginatedResponse;
 import com.hexagonal.ms_foodcourt.application.dto.response.CategoryResponse;
+import com.hexagonal.ms_foodcourt.application.dto.response.PaginatedResponse;
 import com.hexagonal.ms_foodcourt.application.handler.ICategoryHandler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/category")
 @RequiredArgsConstructor
+@Validated
 @Tag(name = "Category", description = "Operations related to category of the dishes")
 public class CategoryRestController {
 

@@ -29,6 +29,9 @@ springdoc:
 userservice:
   url: http://localhost:8080/food-court/users/api/v1
 
+traceservice:
+  url: http://localhost:8083/food-court/traceability/api/v1
+
 aws:
   region: us-east-1
   sqs:

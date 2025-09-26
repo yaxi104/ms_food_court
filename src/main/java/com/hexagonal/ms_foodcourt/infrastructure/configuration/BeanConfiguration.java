@@ -17,6 +17,7 @@ import com.hexagonal.ms_foodcourt.domain.spi.IOrderPersistencePort;
 import com.hexagonal.ms_foodcourt.domain.spi.IPinSecurityPort;
 import com.hexagonal.ms_foodcourt.domain.spi.IRestaurantPersistencePort;
 import com.hexagonal.ms_foodcourt.domain.spi.ISqsSenderServicePort;
+import com.hexagonal.ms_foodcourt.domain.spi.ITraceFeignPort;
 import com.hexagonal.ms_foodcourt.domain.spi.IUserFeignPort;
 import com.hexagonal.ms_foodcourt.domain.spi.IUserSessionPort;
 import com.hexagonal.ms_foodcourt.domain.usecase.CategoryUseCase;
@@ -29,6 +30,9 @@ import com.hexagonal.ms_foodcourt.domain.usecase.order.OrderGetListUseCase;
 import com.hexagonal.ms_foodcourt.domain.usecase.order.OrderReadyUseCase;
 import com.hexagonal.ms_foodcourt.domain.usecase.order.OrderSaveUseCase;
 import com.hexagonal.ms_foodcourt.infrastructure.configuration.aws.AwsProperties;
+import com.hexagonal.ms_foodcourt.infrastructure.output.feign.trace.adapter.TraceFeignAdapter;
+import com.hexagonal.ms_foodcourt.infrastructure.output.feign.trace.client.ITraceServiceClient;
+import com.hexagonal.ms_foodcourt.infrastructure.output.feign.trace.mapper.ITraceFeignMapper;
 import com.hexagonal.ms_foodcourt.infrastructure.output.feign.user.adapter.UserFeignAdapter;
 import com.hexagonal.ms_foodcourt.infrastructure.output.feign.user.client.IUserServiceClient;
 import com.hexagonal.ms_foodcourt.infrastructure.output.feign.user.mapper.IUserFeignMapper;
@@ -74,7 +78,8 @@ public class BeanConfiguration {
     private final SqsClient sqsClient;
     private final AwsProperties awsProperties;
     private final ObjectMapper objectMapper;
-    private final ICategoryEntityMapper categoryMapper;
+    private final ITraceServiceClient traceServiceClient;
+    private final ITraceFeignMapper traceFeignMapper;
 
     @Bean
     public IRestaurantPersistencePort restaurantPersistencePort() {
@@ -117,6 +122,12 @@ public class BeanConfiguration {
     }
 
     @Bean
+    public ITraceFeignPort traceFeignPort() {
+        return new TraceFeignAdapter(traceServiceClient,traceFeignMapper);
+    }
+
+
+    @Bean
     public ISqsSenderServicePort sqsSenderServicePort() {
         return new SqsSenderServiceAdapter(sqsClient, objectMapper, awsProperties);
     }
@@ -133,17 +144,17 @@ public class BeanConfiguration {
 
     @Bean
     public IOrderSaveServicePort orderServicePort() {
-        return new OrderSaveUseCase(dishPersistencePort(), orderPersistencePort(), orderDishPersistencePort(), userFeignPort(), userSessionPort());
+        return new OrderSaveUseCase(dishPersistencePort(), orderPersistencePort(), orderDishPersistencePort(), userFeignPort(), userSessionPort(), traceFeignPort());
     }
 
     @Bean
     public IOrderAssignServicePort orderAssignServicePort() {
-        return new OrderAssignUseCase(orderPersistencePort(), userFeignPort(), userSessionPort());
+        return new OrderAssignUseCase(orderPersistencePort(), userFeignPort(), userSessionPort(), traceFeignPort());
     }
 
     @Bean
     public IOrderReadyServicePort orderReadyServicePort() {
-        return new OrderReadyUseCase(orderPersistencePort(), userFeignPort(), userSessionPort(), pinSecurityPort(), sqsSenderServicePort());
+        return new OrderReadyUseCase(orderPersistencePort(), userFeignPort(), userSessionPort(), pinSecurityPort(), sqsSenderServicePort(), traceFeignPort());
     }
 
     @Bean
@@ -158,11 +169,11 @@ public class BeanConfiguration {
 
     @Bean
     public IOrderDeliveredServicePort orderDeliveredServicePort() {
-        return new OrderDeliveredUseCase(orderPersistencePort(), userFeignPort(), userSessionPort(), pinSecurityPort());
+        return new OrderDeliveredUseCase(orderPersistencePort(), userFeignPort(), userSessionPort(), pinSecurityPort(), traceFeignPort());
     }
 
     @Bean
     public IOrderCanceledServicePort orderCanceledServicePort() {
-        return new OrderCanceledUseCase(orderPersistencePort(), userFeignPort(), userSessionPort());
+        return new OrderCanceledUseCase(orderPersistencePort(), userFeignPort(), userSessionPort(), traceFeignPort());
     }
 }
