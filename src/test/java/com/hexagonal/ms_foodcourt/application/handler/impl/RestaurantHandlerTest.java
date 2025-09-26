@@ -1,6 +1,6 @@
 package com.hexagonal.ms_foodcourt.application.handler.impl;
 
-import com.hexagonal.ms_foodcourt.application.dto.request.PaginatedResponse;
+import com.hexagonal.ms_foodcourt.application.dto.response.PaginatedResponse;
 import com.hexagonal.ms_foodcourt.application.dto.response.RestaurantResponse;
 import com.hexagonal.ms_foodcourt.application.mapper.IRestaurantMapper;
 import com.hexagonal.ms_foodcourt.domain.api.IRestaurantServicePort;

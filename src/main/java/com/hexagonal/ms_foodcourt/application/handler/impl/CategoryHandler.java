@@ -1,7 +1,7 @@
 package com.hexagonal.ms_foodcourt.application.handler.impl;
 
 import com.hexagonal.ms_foodcourt.application.dto.request.CategoryRequest;
-import com.hexagonal.ms_foodcourt.application.dto.request.PaginatedResponse;
+import com.hexagonal.ms_foodcourt.application.dto.response.PaginatedResponse;
 import com.hexagonal.ms_foodcourt.application.dto.response.CategoryResponse;
 import com.hexagonal.ms_foodcourt.application.handler.ICategoryHandler;
 import com.hexagonal.ms_foodcourt.application.mapper.ICategoryMapper;

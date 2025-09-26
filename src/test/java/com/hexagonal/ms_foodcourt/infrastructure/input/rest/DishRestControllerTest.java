@@ -6,7 +6,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.hexagonal.ms_foodcourt.application.dto.request.DishRequest;
 import com.hexagonal.ms_foodcourt.application.dto.request.DishToggleStatusRequest;
 import com.hexagonal.ms_foodcourt.application.dto.request.DishUpdateRequest;
-import com.hexagonal.ms_foodcourt.application.dto.request.PaginatedResponse;
+import com.hexagonal.ms_foodcourt.application.dto.response.PaginatedResponse;
 import com.hexagonal.ms_foodcourt.application.dto.response.DishResponse;
 import com.hexagonal.ms_foodcourt.application.handler.IDishHandler;
 import com.hexagonal.ms_foodcourt.infrastructure.exceptionhandler.ControllerAdvisor;

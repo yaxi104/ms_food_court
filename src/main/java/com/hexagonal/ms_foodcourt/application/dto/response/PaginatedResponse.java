@@ -1,4 +1,4 @@
-package com.hexagonal.ms_foodcourt.application.dto.request;
+package com.hexagonal.ms_foodcourt.application.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

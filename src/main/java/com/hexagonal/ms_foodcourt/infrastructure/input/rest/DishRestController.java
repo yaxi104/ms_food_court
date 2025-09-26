@@ -4,7 +4,7 @@ package com.hexagonal.ms_foodcourt.infrastructure.input.rest;
 import com.hexagonal.ms_foodcourt.application.dto.request.DishRequest;
 import com.hexagonal.ms_foodcourt.application.dto.request.DishToggleStatusRequest;
 import com.hexagonal.ms_foodcourt.application.dto.request.DishUpdateRequest;
-import com.hexagonal.ms_foodcourt.application.dto.request.PaginatedResponse;
+import com.hexagonal.ms_foodcourt.application.dto.response.PaginatedResponse;
 import com.hexagonal.ms_foodcourt.application.dto.response.DishResponse;
 import com.hexagonal.ms_foodcourt.application.handler.IDishHandler;
 import io.swagger.v3.oas.annotations.Operation;
